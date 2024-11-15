@@ -1,17 +1,25 @@
-def writeEnvToFile(workspace, copyArtifact, dynamicVars) {
-    if (copyArtifact == "false") {
-        def envList = []
+def writeEnvToFile(Map args) {
+    println "writeEnvToFile"
+    println args
 
-        // Add dynamic variables to the list
-        dynamicVars.each { varName ->
-            envList << "${varName}=${env.getProperty(varName) ?: ''}"
+    def workspace = args.WORKSPACE
+    def copyArtifact = args.COPY_ARTIFACT
+    def envVars = args.ENV_VARS ?: []
+
+    if (copyArtifact == "false") {
+        def envContent = ""
+
+        // Dynamically build the environment variables content
+        envVars.each { varName ->
+            def varValue = env.getProperty(varName) ?: ''
+            envContent += "${varName}=${s}\n"
         }
 
-        // Write to the file
+        // Write to file
         sh """
         mkdir -p ${workspace}/spawn
         rm -rf ${workspace}/spawn/env_list.txt
-        printf "${envList.join('\\n')}\\n" >> ${workspace}/spawn/env_list.txt
+        printf "${envContent}" >> ${workspace}/spawn/env_list.txt
         """
     }
 }
