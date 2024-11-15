@@ -19,9 +19,11 @@ AWS_INSTANCE_TYPE
 " > ${workspace}/spawn/env_list.txt
     fi
     """
+return this
+
 }
 
-return this
+// return this
 
 
 def cleanVcenter(Map args) {
@@ -41,3 +43,31 @@ def cleanVcenter(Map args) {
     sh command
 }
 
+def createVms(Map args) {
+    echo "createVms with args: ${args}"
+    
+
+    def command = """
+    docker run --rm \
+    --env-file ${args.WORKSPACE}/spawn/env_list.txt \
+    -v ${args.WORKSPACE}:${args.WORKSPACE} \
+    -v /var/run/docker.sock:/var/run/docker.sock ${args.SPAWN_IMAGE} \
+    spawn --verbose --config-dir ${args.WORKSPACE}/spawn \
+    vms \
+    --count "${args.NUM_NODES}" \
+    --cpu "${args.CPU}" \
+    --memory "${args.MEMORY}" --disk-count-px "${args.DISK_COUNT}" \
+    --os "${args.OS}" --provisioner "${args.PROVISIONER}" \
+    --datacenter "${args.DATA_CENTER}" \
+    --networks "${args.NETWORK}" \
+    --vcenter-name  "${args.VCENTER_NAME}" \
+    --vcenter-cluster "${args.CLUSTER_NAME}" \
+    --vcenter-datastore "${DATASTORE}" \
+    --vcenter-resource-pool "${args.RESOURCE_POOL_NAME}" \
+    --pxPrivateCloud true \
+    --pxCloudUser pwx-bat \
+    --tags stork-test --test-tags team:stork, level:13, owner:gejain, pipeline-name:storkbackuprestorewithupgrade, pipeline:true
+    """
+    
+    sh command
+}
