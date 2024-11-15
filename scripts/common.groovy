@@ -22,3 +22,21 @@ AWS_INSTANCE_TYPE
 }
 
 return this
+
+
+def cleanVcenter(Map args) {
+    echo "Cleaning with args: ${args}"
+    
+    // Test command with a simpler image (nginx or ubuntu)
+    def command = """
+    docker run --rm \
+    --env-file ${args.WORKSPACE}/spawn/env_list.txt \
+    -v ${args.WORKSPACE}:${args.WORKSPACE} \
+    -v /var/run/docker.sock:/var/run/docker.sock ${args.SPAWN_IMAGE} \
+    /bin/bash -c "echo Hello from ${args.SPAWN_IMAGE}"
+    """
+    
+    // Run the command (this will print "Hello from <image_name>" to check if the container is running)
+    sh command
+}
+
