@@ -3,7 +3,6 @@ def writeEnvToFile(workspace, copyArtifact) {
     if [ "${copyArtifact}" = "false" ]; then
         mkdir -p ${workspace}/spawn
         rm -rf ${workspace}/spawn/env_list.txt
-        envListFile="${workspace}/spawn/env_list.txt"
         printf "
 BUILD_NUMBER
 JOB_NAME
@@ -17,8 +16,9 @@ AWS_REGION
 AWS_ZONE
 AWS_INSTANCE_NAME
 AWS_INSTANCE_TYPE
-" > $envListFile
+" > ${workspace}/spawn/env_list.txt
     fi
     """
 }
+
 return this
