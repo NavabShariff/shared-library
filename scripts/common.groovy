@@ -1,15 +1,17 @@
-def writeEnvToFile(workspace, copyArtifact, envVars) {
-    if (!copyArtifact) {
-        def spawnDir = "${workspace}/spawn"
-        def filePath = "${spawnDir}/env_list.txt"
-        def envContent = envVars.collect { key, value ->
-            "${key}=${value}"
-        }.join("\n") // Convert the map to "key=value" lines
+def writeEnvToFile(workspace, copyArtifact, dynamicVars) {
+    if (copyArtifact == "false") {
+        def envList = []
 
-        // Ensure the directory exists
-        new File(spawnDir).mkdirs()
+        // Add dynamic variables to the list
+        dynamicVars.each { varName ->
+            envList << "${varName}=${env.getProperty(varName) ?: ''}"
+        }
 
-        writeFile file: filePath, text: envContent
+        // Write to the file
+        sh """
+        mkdir -p ${workspace}/spawn
+        rm -rf ${workspace}/spawn/env_list.txt
+        printf "${envList.join('\\n')}\\n" >> ${workspace}/spawn/env_list.txt
+        """
     }
 }
-
