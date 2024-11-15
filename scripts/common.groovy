@@ -21,7 +21,7 @@ AWS_INSTANCE_TYPE
     """
 }
 
-// return this
+return this
 
 
 def cleanVcenter(Map args) {
