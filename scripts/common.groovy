@@ -4,18 +4,18 @@ def writeEnvToFile(workspace, copyArtifact) {
         mkdir -p ${workspace}/spawn
         rm -rf ${workspace}/spawn/env_list.txt
         printf "
-BUILD_NUMBER
-JOB_NAME
-BUILD_URL
-WORKSPACE
-DASH_UID
-AWS_DEFAULT_REGION
-AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY
-AWS_REGION
-AWS_ZONE
-AWS_INSTANCE_NAME
-AWS_INSTANCE_TYPE
+BUILD_NUMBER="{env.BUILD_NUMBER}"
+JOB_NAME="{env.JOB_NAME}"
+BUILD_URL="{env.BUILD_URL}"
+WORKSPACE="{env.WORKSPACE}"
+DASH_UID="navab"
+AWS_DEFAULT_REGION="pradeepa"
+AWS_ACCESS_KEY_ID="Navab"
+AWS_SECRET_ACCESS_KEY="don't know"
+AWS_REGION="ap-south-1"
+AWS_ZONE="ap-south-1a"
+AWS_INSTANCE_NAME="spawn"
+AWS_INSTANCE_TYPE="t2.micro"
 " > ${workspace}/spawn/env_list.txt
     fi
     """
