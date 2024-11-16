@@ -1,22 +1,16 @@
-def getNginxContainerId() {
-    echo "Starting NGINX container and retrieving container ID..."
+def configLabelMasterNode(Map args) {
     
-    // Run the NGINX container in detached mode
-    def containerId = sh(
-        script: "docker run -d --name ${args.CONTAINER_NAME} ${args.CONTAINER_IMAGE}",
-        returnStdout: true
-    ).trim()
+    def labelCommand = """
+    sudo docker run -t --net=host \
+        -v ${args.WORKSPACE}/spawn/k8s/clusterGroup0/kubeconfig:/tmp/kubeconfig  \
+        -e KUBECONFIG=/tmp/kubeconfig \
+        -e SSH_USERNAME="${args.SSH_USERNAME}" \
+        -e SSH_PASSWORD="${args.SSH_PASSWORD}" \
+        ${args.SPAWN_IMAGE} \
+        lachlanevenson/k8s-kubectl label node ${args.MASTER_NODE} px/enabled=false
+    """
     
-    echo "NGINX container started with ID: ${containerId}"
-    return containerId
+    // Run the labeling command
+    sh(script: labelCommand)
+    echo "Master node ${args.MASTER_NODE} labeled successfully."
 }
-
-def removeNginxContainer(containerId) {
-    echo "Stopping and removing NGINX container with ID: ${containerId}"
-    
-    // Stop and remove the container using docker rm -f
-    sh(script: "docker rm -f ${containerId}")
-    echo "NGINX container with ID ${containerId} has been removed."
-}
-
-return this
