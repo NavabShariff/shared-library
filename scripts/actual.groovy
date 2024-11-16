@@ -93,16 +93,16 @@ def configGetMasterNode(Map args) {
     
 
     def masterNode = sh(
-        script: "sudo docker run -t --net=host \
-    -v ${args.WORKSPACE}/spawn/k8s/clusterGroup0/kubeconfig:/tmp/kubeconfig \
-    -e KUBECONFIG="${args.KUBECONFIG}"
-    -e SSH_USERNAME="${args.SSH_USERNAME}"
-    -e SSH_PASSWORD="${args.SSH_PASSWORD}"
-    lachlanevenson/k8s-kubectl get node --selector='node-role-kubernetes.io/control-plane' -o jsonpath='{.items[0].metadata.name}'"
-    )
+        script: """
+        sudo docker run -t --net=host \
+        -v ${args.WORKSPACE}/spawn/k8s/clusterGroup0/kubeconfig:/tmp/kubeconfig \
+        -e KUBECONFIG="${args.KUBECONFIG}"
+        -e SSH_USERNAME="${args.SSH_USERNAME}"
+        -e SSH_PASSWORD="${args.SSH_PASSWORD}"
+        lachlanevenson/k8s-kubectl get node --selector='node-role-kubernetes.io/control-plane' -o jsonpath='{.items[0].metadata.name}'
+        """,
+        returnStdout: true
+    ).trim()
     
-    def MASTERNODE = sh(script: command, returnStdout: true).trim()
-
-    echo "Maste Node: ${MASTERNODE}"
-    return MASTERNODE
+    return masterNode
 }
