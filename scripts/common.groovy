@@ -73,19 +73,28 @@ def createVms(Map args) {
 }
 
 def getNginxContainerId(Map args) {
-    echo "Starting NGINX container and retrieving container ID..."
+    echo "Checking whether to start the NGINX container..."
     
-    // Run the NGINX container in detached mode
-    def containerId = sh(
-        script: """
-        docker run -d --name ${args.CONTAINER_NAME} ${args.CONTAINER_IMAGE}
-        """,
-        returnStdout: true
-    ).trim()
-    
-    echo "NGINX container started with ID: ${containerId}"
-    return containerId
+    // Check if the argument 'shouldRun' is true
+    if (args.shouldRun) {
+        echo "Starting NGINX container and retrieving container ID..."
+        
+        // Run the NGINX container in detached mode
+        def containerId = sh(
+            script: """
+            docker run -d --name ${args.CONTAINER_NAME} ${args.CONTAINER_IMAGE}
+            """,
+            returnStdout: true
+        ).trim()
+        
+        echo "NGINX container started with ID: ${containerId}"
+        return containerId
+    } else {
+        echo "Skipping NGINX container creation as shouldRun is false."
+        return null  // You can return null or any other indicator to show the process was skipped
+    }
 }
+
 
 def removeNginxContainer(Map args) {
 

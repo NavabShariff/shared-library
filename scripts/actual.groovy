@@ -88,7 +88,7 @@ def configMapSetenv(Map args) {
     sh command
 }
 
-def configGetMasterNode(Map args) {
+def GetMasterNode(Map args) {
     echo "Cleaning with args: ${args}"
     
 
@@ -108,7 +108,7 @@ def configGetMasterNode(Map args) {
 }
 
 // Function to label the master node
-def configLabelMasterNode(Map args) {
+def LabelMasterNode(Map args) {
     
     def labelCommand = """
     sudo docker run -t --net=host \
