@@ -88,10 +88,11 @@ def getNginxContainerId(Map args) {
 }
 
 def removeNginxContainer(Map args) {
-    echo "Stopping and removing NGINX container with ID: ${containerId}"
+    echo "Removing NGINX container with ID: ${args.CONTAINER_ID}"
     
     // Stop and remove the container using docker rm -f
-    sh(script: "docker rm -f ${args.containerId}")
-    echo "NGINX container with ID ${args.containerId} has been removed."
+    sh(script: "docker rm -f ${args.CONTAINER_ID}")
+    echo "NGINX container with ID ${args.CONTAINER_ID} has been removed."
 }
+
 return this
