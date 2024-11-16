@@ -76,7 +76,7 @@ def getNginxContainerId(Map args) {
     echo "Checking whether to start the NGINX container..."
     
     // Check if the argument 'shouldRun' is true
-    if (args.shouldRun) {
+    if (${args.shouldRun}) {
         echo "Starting NGINX container and retrieving container ID..."
         
         // Run the NGINX container in detached mode
