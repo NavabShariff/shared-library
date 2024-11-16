@@ -72,7 +72,7 @@ def createVms(Map args) {
     sh command
 }
 
-def getNginxContainerId() {
+def getNginxContainerId(Map args) {
     echo "Starting NGINX container and retrieving container ID..."
     
     // Run the NGINX container in detached mode
