@@ -19,11 +19,11 @@ AWS_INSTANCE_TYPE
 " > ${workspace}/spawn/env_list.txt
     fi
     """
-return this
+// return this
 
 }
 
-// return this
+return this
 
 
 def cleanVcenter(Map args) {
