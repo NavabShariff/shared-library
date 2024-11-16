@@ -87,7 +87,7 @@ def getNginxContainerId(Map args) {
     return containerId
 }
 
-def removeNginxContainer(Map args) {
+def removeNginxContainer(containerId args) {
     echo "Stopping and removing NGINX container with ID: ${containerId}"
     
     // Stop and remove the container using docker rm -f
