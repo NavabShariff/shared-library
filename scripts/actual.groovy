@@ -71,3 +71,38 @@ def createVms(Map args) {
     
     sh command
 }
+
+def configMapSetenv(Map args) {
+    echo "Cleaning with args: ${args}"
+    
+
+    def command = """
+    sudo docker run -t --net=host \
+    -v ${args.WORKSPACE}/spawn/k8s/clusterGroup0/kubeconfig:/tmp/kubeconfig \
+    -e KUBECONFIG="${args.KUBECONFIG}"
+    -e SSH_USERNAME="${args.SSH_USERNAME}"
+    -e SSH_PASSWORD="${args.SSH_PASSWORD}"
+    lachlanevenson/k8s-kubectl -n kube-system set env deploy/stork TEST_MODE=true
+    """
+    
+    sh command
+}
+
+def configGetMasterNode(Map args) {
+    echo "Cleaning with args: ${args}"
+    
+
+    def masterNode = sh(
+        script: "sudo docker run -t --net=host \
+    -v ${args.WORKSPACE}/spawn/k8s/clusterGroup0/kubeconfig:/tmp/kubeconfig \
+    -e KUBECONFIG="${args.KUBECONFIG}"
+    -e SSH_USERNAME="${args.SSH_USERNAME}"
+    -e SSH_PASSWORD="${args.SSH_PASSWORD}"
+    lachlanevenson/k8s-kubectl get node --selector='node-role-kubernetes.io/control-plane' -o jsonpath='{.items[0].metadata.name}'"
+    )
+    
+    def MASTERNODE = sh(script: command, returnStdout: true).trim()
+
+    echo "Maste Node: ${MASTERNODE}"
+    return MASTERNODE
+}
