@@ -77,7 +77,9 @@ def getNginxContainerId(Map args) {
     
     // Run the NGINX container in detached mode
     def containerId = sh(
-        script: "docker run -d --name ${args.CONTAINER_NAME} ${args.CONTAINER_IMAGE}",
+        script: "
+        docker run -d --name ${args.CONTAINER_NAME} ${args.CONTAINER_IMAGE}
+        ",
         returnStdout: true
     ).trim()
     
