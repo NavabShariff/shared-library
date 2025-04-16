@@ -1,0 +1,37 @@
+name: SonarQube Scanner
+description: Run SonarQube scan for a project.
+inputs:
+  projectName:
+    description: 'SonarQube Project Name'
+    required: true
+  projectKey:
+    description: 'SonarQube Project Key'
+    required: true
+  sonarHostUrl:
+    description: 'SonarQube Server URL'
+    required: true
+  sonarToken:
+    description: 'SonarQube Token'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Cache SonarQube scanner
+      uses: actions/cache@v4
+      with:
+        path: .sonar/cache
+        key: sonarqube-${{ runner.os }}-${{ inputs.projectKey }}
+        restore-keys: sonarqube-
+
+    - name: Run Sonar Scanner
+      run: |
+        export VERSION=${{ github.run_id }}
+        sonar-scanner \
+          -Dsonar.projectName=${{ inputs.projectName }} \
+          -Dsonar.projectKey=${{ inputs.projectKey }} \
+          -Dsonar.sources=src/ \
+          -Dsonar.host.url=${{ inputs.sonarHostUrl }} \
+          -Dsonar.token=${{ inputs.sonarToken }} \
+          -Dsonar.projectVersion=$VERSION \
+          -Dsonar.qualitygate.wait=true
