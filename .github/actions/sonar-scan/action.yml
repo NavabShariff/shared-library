@@ -68,6 +68,7 @@ runs:
           maven-${{ runner.os }}-
 
     - name: Run Maven Build and SonarQube Scan
+      shell: bash
       run: |
         mvn clean verify sonar:sonar \
           -Dsonar.host.url=${{ inputs.sonarHostUrl }} \
