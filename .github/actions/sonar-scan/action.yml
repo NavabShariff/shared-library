@@ -1,5 +1,46 @@
-name: SonarQube Scanner
-description: Run SonarQube scan for a project.
+# name: SonarQube Scanner
+# description: Run SonarQube scan for a project.
+# inputs:
+#   projectName:
+#     description: 'SonarQube Project Name'
+#     required: true
+#   projectKey:
+#     description: 'SonarQube Project Key'
+#     required: true
+#   sonarHostUrl:
+#     description: 'SonarQube Server URL'
+#     required: true
+#   sonarToken:
+#     description: 'SonarQube Token'
+#     required: true
+
+# runs:
+#   using: "composite"
+#   steps:
+#     - name: Cache SonarQube scanner
+#       uses: actions/cache@v4
+#       with:
+#         path: .sonar/cache
+#         key: sonarqube-${{ runner.os }}-${{ inputs.projectKey }}
+#         restore-keys: sonarqube-
+
+#     - name: Run Sonar Scanner
+#       shell: bash
+#       run: |
+#         export VERSION=${{ github.run_id }}
+#         sonar-scanner \
+#           -Dsonar.projectName=${{ inputs.projectName }} \
+#           -Dsonar.projectKey=${{ inputs.projectKey }} \
+#           -Dsonar.sources=src/ \
+#           -Dsonar.java.binaries=target/classes \
+#           -Dsonar.host.url=${{ inputs.sonarHostUrl }} \
+#           -Dsonar.token=${{ inputs.sonarToken }} \
+#           -Dsonar.projectVersion=$VERSION \
+#           -Dsonar.qualitygate.wait=true
+
+name: SonarQube Maven Scan
+description: Run SonarQube scan and build the project using Maven.
+
 inputs:
   projectName:
     description: 'SonarQube Project Name'
@@ -17,23 +58,19 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Cache SonarQube scanner
+
+    - name: Cache Maven dependencies
       uses: actions/cache@v4
       with:
-        path: .sonar/cache
-        key: sonarqube-${{ runner.os }}-${{ inputs.projectKey }}
-        restore-keys: sonarqube-
+        path: ~/.m2
+        key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          maven-${{ runner.os }}-
 
-    - name: Run Sonar Scanner
-      shell: bash
+    - name: Run Maven Build and SonarQube Scan
       run: |
-        export VERSION=${{ github.run_id }}
-        sonar-scanner \
-          -Dsonar.projectName=${{ inputs.projectName }} \
-          -Dsonar.projectKey=${{ inputs.projectKey }} \
-          -Dsonar.sources=src/ \
-          -Dsonar.java.binaries=target/classes \
+        mvn clean verify sonar:sonar \
           -Dsonar.host.url=${{ inputs.sonarHostUrl }} \
-          -Dsonar.token=${{ inputs.sonarToken }} \
-          -Dsonar.projectVersion=$VERSION \
-          -Dsonar.qualitygate.wait=true
+          -Dsonar.login=${{ inputs.sonarToken }} \
+          -Dsonar.projectName=${{ inputs.projectName }} \
+          -Dsonar.projectKey=${{ inputs.projectKey }}
