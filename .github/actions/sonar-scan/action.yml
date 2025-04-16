@@ -25,6 +25,7 @@ runs:
         restore-keys: sonarqube-
 
     - name: Run Sonar Scanner
+      shell: bash
       run: |
         export VERSION=${{ github.run_id }}
         sonar-scanner \
