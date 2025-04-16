@@ -32,6 +32,7 @@ runs:
           -Dsonar.projectName=${{ inputs.projectName }} \
           -Dsonar.projectKey=${{ inputs.projectKey }} \
           -Dsonar.sources=src/ \
+          -Dsonar.java.binaries=target/classes \
           -Dsonar.host.url=${{ inputs.sonarHostUrl }} \
           -Dsonar.token=${{ inputs.sonarToken }} \
           -Dsonar.projectVersion=$VERSION \
