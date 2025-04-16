@@ -54,6 +54,9 @@ inputs:
   sonarToken:
     description: 'SonarQube Token'
     required: true
+  coverageReportPath:
+    description: 'Path to the coverage report (e.g., index.html)'
+    required: false
 
 runs:
   using: "composite"
@@ -76,4 +79,5 @@ runs:
           -Dsonar.login=${{ inputs.sonarToken }} \
           -Dsonar.projectName=${{ inputs.projectName }} \
           -Dsonar.projectKey=${{ inputs.projectKey }} \
+          -Dsonar.coverageReportPaths=${{ inputs.coverageReportPath }} \
           -Dsonar.qualitygate.wait=true
