@@ -75,4 +75,5 @@ runs:
           -Dsonar.host.url=${{ inputs.sonarHostUrl }} \
           -Dsonar.login=${{ inputs.sonarToken }} \
           -Dsonar.projectName=${{ inputs.projectName }} \
-          -Dsonar.projectKey=${{ inputs.projectKey }}
+          -Dsonar.projectKey=${{ inputs.projectKey }} \
+          -Dsonar.qualitygate.wait=true
