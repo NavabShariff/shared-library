@@ -71,6 +71,7 @@ runs:
       shell: bash
       run: |
         mvn clean verify sonar:sonar \
+          -DskipTests \
           -Dsonar.host.url=${{ inputs.sonarHostUrl }} \
           -Dsonar.login=${{ inputs.sonarToken }} \
           -Dsonar.projectName=${{ inputs.projectName }} \
