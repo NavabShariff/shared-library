@@ -2,6 +2,9 @@ name: SonarQube Scan
 description: Run SonarQube scan and build the project using Maven.
 
 inputs:
+  language:
+    description: 'Project Language (java/python/node)'
+    required: true
   projectName:
     description: 'SonarQube Project Name'
     required: true
@@ -27,6 +30,7 @@ runs:
   steps:
 
     - name: Run Maven Build and SonarQube Scan
+      if: ${{ inputs.language == 'java' }}
       shell: bash
       run: |
         mvn clean verify sonar:sonar \
@@ -37,3 +41,16 @@ runs:
           -Dsonar.projectKey=${{ inputs.projectKey }} \
           -Dsonar.coverage.jacoco.xmlReportPaths=${{ inputs.coverageReportPath }} \
           -Dsonar.qualitygate.wait=${{ inputs.qualityGateWait }}
+
+    - name: Run SonarQube Scan for Python
+      if: ${{ inputs.language == 'python' }}
+      shell: bash
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey=${{ inputs.projectKey }} \
+          -Dsonar.projectName=${{ inputs.projectName }} \
+          -Dsonar.host.url=${{ inputs.sonarHostUrl }} \
+          -Dsonar.login=${{ inputs.sonarToken }} \
+          -Dsonar.qualitygate.wait=${{ inputs.qualityGateWait }}
+
+          
