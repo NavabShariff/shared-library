@@ -1,0 +1,15 @@
+name: Docker Build
+description: Build Docker Image for Project
+
+inputs:
+  image_name:
+    required: true
+  tags:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        echo "Building image ${{ inputs.image_name }}:${{ inputs.tags }}"
+        docker build -t ${{ inputs.image_name }}:${{ inputs.tags }} .

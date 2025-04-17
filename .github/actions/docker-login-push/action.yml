@@ -1,0 +1,29 @@
+name: Docker Login and Push
+description: Logs into Docker registry and pushes an image
+
+inputs:
+  registry:
+    description: Docker registry (example: ghcr.io, public.ecr.aws, index.docker.io)
+    required: true
+  username:
+    description: Docker registry username
+    required: true
+  password:
+    description: Docker registry password / token
+    required: true
+  image_name:
+    description: Full image name (example: ghcr.io/org/app)
+    required: true
+  tag:
+    description: Image tag
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        echo "🔐 Logging in to ${{ inputs.registry }}"
+        echo "${{ inputs.password }}" | docker login ${{ inputs.registry }} -u "${{ inputs.username }}" --password-stdin
+
+        echo "🚀 Pushing ${{ inputs.image_name }}:${{ inputs.tag }}"
+        docker push ${{ inputs.image_name }}:${{ inputs.tag }}
