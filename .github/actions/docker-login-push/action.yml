@@ -3,7 +3,7 @@ description: Logs into Docker registry and pushes an image
 
 inputs:
   registry:
-    description: Docker registry (example: ghcr.io, public.ecr.aws, index.docker.io)
+    description: Docker registry
     required: true
   username:
     description: Docker registry username
