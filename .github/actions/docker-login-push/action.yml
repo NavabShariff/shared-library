@@ -12,7 +12,7 @@ inputs:
     description: Docker registry password / token
     required: true
   image_name:
-    description: Full image name (example: ghcr.io/org/app)
+    description: Full image name
     required: true
   tag:
     description: Image tag
