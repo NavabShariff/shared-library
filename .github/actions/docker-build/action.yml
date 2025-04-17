@@ -11,6 +11,8 @@ runs:
   using: "composite"
   shell: bash
   steps:
-    - run: |
-        echo "Building image ${{ inputs.image_name }}:${{ inputs.tags }}"
-        docker build -t ${{ inputs.image_name }}:${{ inputs.tags }} .
+  - name: Run docker build
+    shell: bash
+    run: |
+      echo "Building image ${{ inputs.image_name }}:${{ inputs.tags }}"
+      docker build -t ${{ inputs.image_name }}:${{ inputs.tags }} .

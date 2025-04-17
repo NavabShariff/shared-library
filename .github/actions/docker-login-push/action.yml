@@ -20,9 +20,10 @@ inputs:
 
 runs:
   using: "composite"
-  shell: bash
   steps:
-    - run: |
+    - name: Run docker build
+      shell: bash
+      run: |
         echo "🔐 Logging in to ${{ inputs.registry }}"
         echo "${{ inputs.password }}" | docker login ${{ inputs.registry }} -u "${{ inputs.username }}" --password-stdin
 
