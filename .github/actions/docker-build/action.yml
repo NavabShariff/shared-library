@@ -9,6 +9,7 @@ inputs:
 
 runs:
   using: "composite"
+  shell: bash
   steps:
     - run: |
         echo "Building image ${{ inputs.image_name }}:${{ inputs.tags }}"
