@@ -1,0 +1,46 @@
+name: Trivy Scan Action
+
+description: 'Run Trivy scan on a Docker image'
+
+inputs:
+  image_name:
+    description: 'Name of the Docker image to scan'
+    required: true
+  tag:
+    description: 'Tag of the Docker image to scan'
+    required: true
+  severity_threshold:
+    description: 'Severity threshold for failing the scan (e.g., 10 for CRITICAL)'
+    required: false
+    default: '10'
+
+outputs:
+  trivy_result_file:
+    description: 'The file containing the scan results'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Trivy Scan
+      id: trivy-scan
+      run: |
+        docker run --rm \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          aquasec/trivy:latest image --scanners vuln --offline ${INPUT_IMAGE_NAME}:${INPUT_TAG} > trivyresult.txt
+        
+        # Store the result as output
+        echo "::set-output name=trivy_result_file::trivyresult.txt"
+
+    - name: Parse Trivy Result
+      id: parse-result
+      run: |
+        # Parse the result and check for critical vulnerabilities
+        critical_count=$(grep -o 'CRITICAL' trivyresult.txt | wc -l)
+        
+        # If critical vulnerabilities are above threshold, fail the job
+        if [ "$critical_count" -gt "${INPUT_SEVERITY_THRESHOLD}" ]; then
+          echo "Critical vulnerabilities found: $critical_count"
+          exit 1
+        else
+          echo "Critical vulnerabilities found: $critical_count. Proceeding with next steps."
+        fi
