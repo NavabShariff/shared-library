@@ -2,6 +2,10 @@ name: Docker Login and Push
 description: Logs into Docker registry and pushes an image
 
 inputs:
+  skip_login:
+    description: Skip docker login if already done
+    required: false
+    default: "false"
   registry:
     description: Docker registry
     required: true
@@ -24,8 +28,12 @@ runs:
     - name: Run docker build
       shell: bash
       run: |
-        echo "🔐 Logging in to ${{ inputs.registry }}"
-        echo "${{ inputs.password }}" | docker login ${{ inputs.registry }} -u "${{ inputs.username }}" --password-stdin
+        if [[ "${{ inputs.skip_login }}" != "true" ]]; then
+          echo "🔐 Logging in to ${{ inputs.registry }}"
+          echo "${{ inputs.password }}" | docker login ${{ inputs.registry }} -u "${{ inputs.username }}" --password-stdin
+        else
+          echo "✅ Skipping Docker login, assuming already authenticated."
+        fi
 
         echo "🚀 Pushing ${{ inputs.image_name }}:${{ inputs.tag }}"
         docker push ${{ inputs.image_name }}:${{ inputs.tag }}
