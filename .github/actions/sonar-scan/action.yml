@@ -17,6 +17,10 @@ inputs:
   coverageReportPath:
     description: 'Path to the coverage report (e.g., index.html)'
     required: false
+  qualityGateWait:
+    description: 'Wait for SonarQube Quality Gate Result (true/false)'
+    required: false
+    default: 'true'
 
 runs:
   using: "composite"
@@ -32,4 +36,4 @@ runs:
           -Dsonar.projectName=${{ inputs.projectName }} \
           -Dsonar.projectKey=${{ inputs.projectKey }} \
           -Dsonar.coverage.jacoco.xmlReportPaths=${{ inputs.coverageReportPath }} \
-          -Dsonar.qualitygate.wait=true
+          -Dsonar.qualitygate.wait=${{ inputs.qualityGateWait }}
