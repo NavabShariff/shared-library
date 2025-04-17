@@ -31,5 +31,5 @@ runs:
           -Dsonar.login=${{ inputs.sonarToken }} \
           -Dsonar.projectName=${{ inputs.projectName }} \
           -Dsonar.projectKey=${{ inputs.projectKey }} \
-          -Dsonar.coverageReportPaths=${{ inputs.coverageReportPath }} \
+          -Dsonar.coverage.jacoco.xmlReportPaths=${{ inputs.coverageReportPath }} \
           -Dsonar.qualitygate.wait=true
