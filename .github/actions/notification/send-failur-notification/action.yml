@@ -1,46 +1,49 @@
-name: Send Failure Notification
+name: "Send Failure Notification"
+description: "Send an email if a job fails"
 
-on:
-  workflow_call:
-    inputs:
-      commit_author_name:
-        required: true
-        type: string
-      commit_author_email:
-        required: true
-        type: string
-      commit_message:
-        required: true
-        type: string
-      commit_id:
-        required: true
-        type: string
-      run_id:
-        required: true
-        type: string
+inputs:
+  smtp_server:
+    required: true
+    description: "SMTP Server Address"
+  smtp_username:
+    required: true
+    description: "SMTP Username"
+  smtp_password:
+    required: true
+    description: "SMTP Password"
+  commit_author_name:
+    required: true
+  commit_author_email:
+    required: true
+  commit_message:
+    required: true
+  commit_id:
+    required: true
+  run_id:
+    required: true
 
-jobs:
-  notify:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send Failure Notification Email
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: ${{ secrets.SMTP_SERVER }}
-          server_port: 465
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          subject: "🚨 Build Failed for Commit ${{ inputs.commit_id }}"
-          to: "${{ inputs.commit_author_email }}"
-          from: "${{ secrets.SMTP_USERNAME }}"
-          body: |
-            Hello ${{ inputs.commit_author_name }},
+runs:
+  using: "composite"
+  steps:
+    - name: Send Failure Notification Email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: ${{ inputs.smtp_server }}
+        server_port: 587
+        username: ${{ inputs.smtp_username }}
+        password: ${{ inputs.smtp_password }}
+        subject: "🚨 Build Failed for Commit ${{ inputs.commit_id }}"
+        to: "${{ inputs.commit_author_email }}"
+        from: "${{ inputs.smtp_username }}"
+        body: |
+          Hello Developer,
 
-            Your commit has caused the build to fail.
+          Your latest commit has caused the build to fail.
 
-            💡 Commit Message: ${{ inputs.commit_message }}  
-            🔢 Commit ID: ${{ inputs.commit_id }}
+          🧑‍💻 Author: ${{ inputs.commit_author_name }}
+          💡 Commit Message: ${{ inputs.commit_message }}
+          🔢 Commit ID: ${{ inputs.commit_id }}
 
-            📄 Logs: https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run_id }}
+          📄 Logs: https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run_id }}
 
-            Please fix this as soon as possible.
+          Please check and fix it.
