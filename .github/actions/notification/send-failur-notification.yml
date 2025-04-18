@@ -1,0 +1,46 @@
+name: Send Failure Notification
+
+on:
+  workflow_call:
+    inputs:
+      commit_author_name:
+        required: true
+        type: string
+      commit_author_email:
+        required: true
+        type: string
+      commit_message:
+        required: true
+        type: string
+      commit_id:
+        required: true
+        type: string
+      run_id:
+        required: true
+        type: string
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Failure Notification Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "🚨 Build Failed for Commit ${{ inputs.commit_id }}"
+          to: "${{ inputs.commit_author_email }}"
+          from: "${{ secrets.SMTP_USERNAME }}"
+          body: |
+            Hello ${{ inputs.commit_author_name }},
+
+            Your commit has caused the build to fail.
+
+            💡 Commit Message: ${{ inputs.commit_message }}  
+            🔢 Commit ID: ${{ inputs.commit_id }}
+
+            📄 Logs: https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run_id }}
+
+            Please fix this as soon as possible.
