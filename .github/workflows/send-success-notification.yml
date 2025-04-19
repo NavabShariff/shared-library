@@ -3,16 +3,14 @@ description: "Send an email if the build is successful and image is ready"
 
 on:
   workflow_call:
-    inputs:
+    secrets:
       smtp_server:
         required: true
-        type: string
       smtp_username:
         required: true
-        type: string
       smtp_password:
         required: true
-        type: string
+    inputs:
       commit_author_name:
         required: true
         type: string
