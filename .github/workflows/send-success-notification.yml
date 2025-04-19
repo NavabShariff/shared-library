@@ -7,15 +7,12 @@ on:
       smtp_server:
         required: true
         type: string
-        description: "SMTP Server Address"
       smtp_username:
         required: true
         type: string
-        description: "SMTP Username"
       smtp_password:
         required: true
         type: string
-        description: "SMTP Password"
       commit_author_name:
         required: true
         type: string
