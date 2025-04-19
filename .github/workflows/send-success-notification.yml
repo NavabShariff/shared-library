@@ -40,7 +40,7 @@ jobs:
           password: ${{ secrets.smtp_password }}
           subject: "✅ Build Successful for Commit ${{ inputs.commit_id }}"
           to: "${{ inputs.commit_author_email }}"
-          from: "${{ inputs.smtp_username }}"
+          from: "${{ secrets.smtp_username }}"
           body: |
             Hello Developer,
 
