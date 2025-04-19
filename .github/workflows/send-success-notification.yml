@@ -34,10 +34,10 @@ jobs:
       - name: Send Success Notification Email
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: ${{ inputs.smtp_server }}
+          server_address: ${{ secrets.smtp_server }}
           server_port: 587
-          username: ${{ inputs.smtp_username }}
-          password: ${{ inputs.smtp_password }}
+          username: ${{ secrets.smtp_username }}
+          password: ${{ secrets.smtp_password }}
           subject: "✅ Build Successful for Commit ${{ inputs.commit_id }}"
           to: "${{ inputs.commit_author_email }}"
           from: "${{ inputs.smtp_username }}"
