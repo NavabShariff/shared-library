@@ -1,0 +1,67 @@
+name: Build and Push Docker Image to ECR
+
+on:
+  workflow_call:
+    inputs:
+      ecr_repo:
+        required: true
+        type: string
+      aws_region:
+        required: true
+        type: string
+      download_artifacts:
+        required: false
+        type: boolean
+        default: false
+      artifact_name:
+        required: false
+        type: string
+
+    secrets:
+      AWS_IAM_ROLE_ATHENTICATION:
+        required: true
+
+    # outputs:
+    #   image_tag:
+    #     value: ${{ jobs.docker.outputs.image_tag }}
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.vars.outputs.image_tag }}
+    steps:
+      - name: Download Source Code
+        if: ${{ inputs.download_artifacts }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: .
+
+      - name: Remove target folder
+        run: rm -rf ./target
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ATHENTICATION }}
+          role-session-name: GitHubActionSession
+          aws-region: ${{ inputs.aws_region }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Set Image Tag
+        id: vars
+        run: |
+          IMAGE_TAG=${{ github.ref_name }}-$(echo $GITHUB_SHA | head -c 8)
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Build & Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr_repo }}:${{ env.IMAGE_TAG }}
