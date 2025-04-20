@@ -53,3 +53,34 @@ jobs:
             📄 Logs: https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run_id }}
 
             Please check and fix it.
+
+
+  # notify-on-success:
+  #   uses: NavabShariff/shared-library/.github/workflows/send-success-notification.yml@main
+  #   needs: [build, sast, docker-build-push, docker-image-scan, trigger-deploy]
+  #   if: success()
+  #   secrets:
+  #     smtp_server: ${{ secrets.SMTP_SERVER }}
+  #     smtp_username: ${{ secrets.SMTP_USERNAME }}
+  #     smtp_password: ${{ secrets.SMTP_PASSWORD }}
+  #   with:
+  #     commit_author_name: ${{ github.event.pusher.name }}
+  #     commit_author_email: ${{ github.event.pusher.email }}
+  #     commit_message: ${{ github.event.head_commit.message }}
+  #     commit_id: ${{ github.sha }}
+  #     run_id: ${{ github.run_id }}
+
+  # notify-on-failure:
+  #   uses: NavabShariff/shared-library/.github/workflows/send-failure-notification.yml@main
+  #   needs: [build, sast, docker-build-push, docker-image-scan, trigger-deploy]
+  #   if: failure() 
+  #   secrets:
+  #     smtp_server: ${{ secrets.SMTP_SERVER }}
+  #     smtp_username: ${{ secrets.SMTP_USERNAME }}
+  #     smtp_password: ${{ secrets.SMTP_PASSWORD }}
+  #   with:
+  #     commit_author_name: ${{ github.event.pusher.name }}
+  #     commit_author_email: ${{ github.event.pusher.email }}
+  #     commit_message: ${{ github.event.head_commit.message }}
+  #     commit_id: ${{ github.sha }}
+  #     run_id: ${{ github.run_id }}
