@@ -20,7 +20,7 @@ on:
         required: true
 
 jobs:
-  sast:
+  sonar-scanning:
     runs-on: ubuntu-latest
     container:
       image: sonarsource/sonar-scanner-cli:latest

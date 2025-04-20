@@ -21,7 +21,7 @@ on:
         required: true
 
 jobs:
-  image-scan:
+  ecr-image-scan:
     runs-on: ubuntu-latest
     steps:
       - name: Download Source Code
