@@ -46,7 +46,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{ inputs.status == 'success' && ':rocket: Deployment Succeeded' || ':x: Deployment Failed' }}\nCommit: `${{ inputs.commit_id }}`\nMessage: *${{ inputs.commit_message }}*"
+                    "text": "${{ inputs.status == 'success' && ':rocket: Deployment Triggered' || ':x: Deployment Failed' }}\nCommit: `${{ inputs.commit_id }}`\nMessage: *${{ inputs.commit_message }}*"
                   },
                   "accessory": {
                     "type": "button",
