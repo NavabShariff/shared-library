@@ -1,0 +1,45 @@
+name: SonarQube Static Code Analysis
+
+on:
+  workflow_call:
+    inputs:
+      download_artifacts:
+        required: false
+        type: boolean
+        default: false
+      artifact_name:
+        required: false
+        type: string
+    secrets:
+      SONAR_HOST_URL:
+        required: true
+      SONAR_TOKEN:
+        required: true
+
+jobs:
+  sast:
+    runs-on: ubuntu-latest
+    container:
+      image: sonarsource/sonar-scanner-cli:latest
+      options: --user root
+    steps:
+      - name: Download Source Code
+        if: ${{ inputs.download_artifacts }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: .
+
+      - name: Run SonarQube Scan
+        run: |
+          sonar-scanner \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.projectName=${{ github.event.repository.name }} \
+            -Dsonar.projectKey=${{ github.event.repository.name }} \
+            -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml \
+            -Dsonar.dependencyCheck.reportPath=dependency-check-report.xml \
+            -Dsonar.sources=src/main/java \
+            -Dsonar.tests=src/test/java \
+            -Dsonar.java.binaries=target/classes \
+            -Dsonar.qualitygate.wait=true
