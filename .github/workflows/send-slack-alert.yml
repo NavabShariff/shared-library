@@ -49,7 +49,7 @@ jobs:
                     "type": "section",
                     "text": {
                       "type": "mrkdwn",
-                      "text": "${{ inputs.status == 'success' && ':rocket: Deployment Triggered' || format(':x: Build Failed in stage: {0}', inputs.failed_stage) }}\nCommit: `${{ inputs.commit_id }}`\nMessage: *${{ inputs.commit_message }}*"
+                      "text": "${{ inputs.status == 'success' && ':rocket: Deployment Triggered' || ':x: Build Failed in branch: ' + github.ref_name }}\nCommit: `${{ inputs.commit_id }}`\nMessage: *${{ inputs.commit_message }}*"
                     },
                     "accessory": {
                       "type": "button",
