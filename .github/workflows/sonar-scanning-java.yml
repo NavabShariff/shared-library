@@ -10,6 +10,9 @@ on:
       artifact_name:
         required: false
         type: string
+      qualitygate:
+        required: true
+        type: string
     secrets:
       SONAR_HOST_URL:
         required: true
@@ -42,4 +45,4 @@ jobs:
             -Dsonar.sources=src/main/java \
             -Dsonar.tests=src/test/java \
             -Dsonar.java.binaries=target/classes \
-            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.wait=${{ inputs.qualitygate }}
