@@ -9,7 +9,7 @@ on:
         type: string
       java_version:
         required: true
-        tyep: string
+        type: string
 
 jobs:
   build:
