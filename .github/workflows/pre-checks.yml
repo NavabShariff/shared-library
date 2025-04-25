@@ -5,19 +5,19 @@ on:
    inputs:
       fail:
         required: false
-        type: boolean
+        type: string
       verbose:
         required: false
-        type: boolean
+        type: string
       redact: 
         required: false
-        type: boolean
+        type: string
       commit_sign_off:
         required: true
-        type: boolean
+        type: string
       commit_message:
         required: false
-        type: boolean
+        type: string
       upload_artifacts:
         required: false
         type: boolean
