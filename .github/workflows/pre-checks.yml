@@ -3,6 +3,10 @@ name: pre-checks
 on:
  workflow_call:
    inputs:
+      GITLEAKS_ENABLE_UPLOAD_ARTIFACT:
+        required: false
+        type: boolean
+        default: false
       commit_sign_off:
         required: true
         type: string
@@ -38,7 +42,9 @@ jobs:
 
     - name: credential-scan
       uses: gitleaks/gitleaks-action@v2
-
+      with:
+        GITLEAKS_ENABLE_UPLOAD_ARTIFACT: ${{ inputs.GITLEAKS_ENABLE_UPLOAD_ARTIFACT }}
+        
     - name: check-commit-sign-off
       uses: commit-check/commit-check-action@v1
       with:
