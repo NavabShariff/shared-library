@@ -26,13 +26,13 @@ on:
     outputs:
       image_tag:
         description: "Image name"
-        value: ${{ jobs.docker-image-build.outputs.image_tag }}
+        value: ${{ jobs.docker_build_push.outputs.image_tag }}
       image_name:
         description: "Image name"
-        value: ${{ jobs.docker-image-build.outputs.image_name }}
+        value: ${{ jobs.docker_build_push.outputs.image_name }}
 
 jobs:
-  docker-image-build:
+  docker_build_push:
     runs-on: ubuntu-latest
     outputs:
       image_tag: ${{ steps.vars.outputs.image_tag }}

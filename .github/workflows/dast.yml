@@ -16,7 +16,9 @@ on:
       image_tag:
         required: true
         type: string
-
+    secrets:
+      GH_TOKEN:
+        required: true
 jobs:
   dast:
     runs-on: ubuntu-latest
