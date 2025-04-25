@@ -1,0 +1,58 @@
+name: pre-checks
+
+on:
+ workflow_call:
+   inputs:
+      fail:
+        required: false
+        type: string
+      verbose:
+        required: false
+        type: string
+      redact: 
+        required: false
+        type: string
+      commit_sign_off:
+        required: true
+        type: string
+      commit_message:
+        required: false
+        type: string
+      upload_artifacts:
+        required: false
+        type: boolean
+        default: false
+      artifact_name:
+        required: false
+        type: string
+        default: 'source-code'
+
+jobs:
+  prechecks:
+   runs-on: ubuntu-latest
+   steps:
+    - name: checkout code
+      uses: actions/checkout@v4
+      with:
+        path: .
+
+    - name: credential-scan
+      uses: gitleaks/gitleak-action@v2
+      with:
+          fail: ${{ inputs.fail }}
+          redact: ${{ inputs.redact }}
+          verbose: ${{ inputs.verbose }}
+
+
+    - name: check-commit-sign-off
+      uses: commit-check/commit-check-action@v1
+      with:
+        commit_sign_off: ${{ inputs.commit_sign_off }}
+        commit_message: ${{ inputs.commit_message }}
+
+    - name: Upload Source Code
+      if: ${{ inputs.upload_artifacts }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: .
