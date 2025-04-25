@@ -5,22 +5,22 @@ on:
    inputs:
       fail:
         required: false
-        type: string
+        type: boolean
       verbose:
         required: false
-        type: string
+        type: boolean
       redact: 
         required: false
-        type: string
+        type: boolean
       commit_sign_off:
         required: true
-        type: string
+        type: boolean
       commit_message:
         required: false
-        type: string
+        type: boolean
       upload_artifacts:
         required: false
-        type: string
+        type: boolean
         default: false
       artifact_name:
         required: false
@@ -48,8 +48,8 @@ jobs:
     - name: check-commit-sign-off
       uses: commit-check/commit-check-action@v1
       with:
-        commit_sign_off: ${{ inputs.commit_sign_off }}
-        commit_message: ${{ inputs.commit_message }}
+        commit-signoff: ${{ inputs.commit_sign_off }}
+        message: ${{ inputs.commit_message }}
 
     - name: Upload Source Code
       if: ${{ inputs.upload_artifacts }}
