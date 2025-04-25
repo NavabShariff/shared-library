@@ -1,0 +1,27 @@
+name: test-1
+
+on: 
+  workflow_call:
+    inputs:
+      image_name:
+        required: true
+        type: string
+      # image_tag:
+      #   required: true
+      #   type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    outputs:
+      image_name: ${{ steps.vars.outputs.IMAGE_NAME }}
+    steps:
+    - name: test
+      id: vars
+      run: |
+       echo "IMAGE_NAME=${{ inputs.image_name }}" >> GITHUB_ENV
+       echo "IMAGE_NAME=${{ inputs.image_name }}" >> $GITHUB_OUTPUT
+    
+    # - name: print
+    #   run: |
+    #    echo "IMAGE_NAME=${{ inputs.image_name }}"
