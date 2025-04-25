@@ -14,7 +14,7 @@ on:
         type: boolean
         default: false
       license_decision_file:
-        required: true
+        required: false
         type: string
         default: 'doc/dependency_decisions.yml'
       upload_artifacts:
