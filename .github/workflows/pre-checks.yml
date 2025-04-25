@@ -39,10 +39,10 @@ jobs:
 
     - name: credential-scan
       uses: gitleaks/gitleaks-action@v2
-      with:
-        fail: ${{ inputs.fail }}
-        redact: ${{ inputs.redact }}
-        verbose: ${{ inputs.verbose }}
+      # with:
+      #   fail: ${{ inputs.fail }}
+      #   redact: ${{ inputs.redact }}
+      #   verbose: ${{ inputs.verbose }}
 
 
     - name: check-commit-sign-off
