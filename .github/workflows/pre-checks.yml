@@ -38,7 +38,7 @@ jobs:
         path: .
 
     - name: credential-scan
-      uses: gitleaks/gitleaks-action@v1
+      uses: gitleaks/gitleaks-action@v2
       with:
         fail: ${{ inputs.fail }}
         redact: ${{ inputs.redact }}
