@@ -7,9 +7,23 @@ on:
         required: false
         type: boolean
         default: false
-      artifact_name:
+      download_artifact_name:
         required: false
         type: string
+      download_bug_report:
+        required: false
+        type: boolean
+        default: false
+      bug_report_name:
+        required: false
+        type: sting
+      download_dependency_check_report:
+        required: false
+        type: boolean
+        default: false
+      dependency_check_report_name:
+        required: false
+        type: sting
       qualitygate:
         required: true
         type: string
@@ -26,12 +40,31 @@ jobs:
       image: sonarsource/sonar-scanner-cli:latest
       options: --user root
     steps:
-      - name: Download Source Code
+      - name: Download compile Source Code
         if: ${{ inputs.download_artifacts }}
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.artifact_name }}
+          name: ${{ inputs.download_artifact_name }}
           path: .
+
+      - name: Download Bug report
+        if: ${{ inputs.download_bug_report }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.bug_report_name }}
+          path: target
+
+      - name: Download dependency check
+        if: ${{ inputs.download_dependency_check_report }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.dependency_check_report_name }}
+          path: .
+
+      - name: check files
+        run: |
+          ls -lh
+          ls -lh target
 
       - name: Run SonarQube Scan
         run: |
@@ -41,7 +74,8 @@ jobs:
             -Dsonar.projectName=${{ github.event.repository.name }} \
             -Dsonar.projectKey=${{ github.event.repository.name }} \
             -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml \
-            -Dsonar.dependencyCheck.reportPath=dependency-check-report.xml \
+            -Dsonar.dependencyCheck.reportPath=dependency-check-report.html \
+            -Dsonar.findbugs.reportpaths=target/spotbugsXml.xml \
             -Dsonar.sources=src/main/java \
             -Dsonar.tests=src/test/java \
             -Dsonar.java.binaries=target/classes \
