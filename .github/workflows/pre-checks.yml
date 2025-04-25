@@ -5,26 +5,26 @@ on:
    inputs:
       fail:
         required: false
-        # type: string
+        type: boolean
       verbose:
         required: false
-        # type: string
+        type: boolean
       redact: 
         required: false
-        # type: string
+        type: boolean
       commit_sign_off:
         required: true
-        # type: string
+        type: boolean
       commit_message:
         required: false
-        # type: string
+        type: boolean
       upload_artifacts:
         required: false
-        # type: boolean
+        type: boolean
         default: false
       artifact_name:
         required: false
-        # type: string
+        type: string
         default: 'source-code'
 
 jobs:
