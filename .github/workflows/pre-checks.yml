@@ -5,26 +5,26 @@ on:
    inputs:
       fail:
         required: false
-        type: string
+        # type: string
       verbose:
         required: false
-        type: string
+        # type: string
       redact: 
         required: false
-        type: string
+        # type: string
       commit_sign_off:
         required: true
-        type: string
+        # type: string
       commit_message:
         required: false
-        type: string
+        # type: string
       upload_artifacts:
         required: false
-        type: boolean
+        # type: boolean
         default: false
       artifact_name:
         required: false
-        type: string
+        # type: string
         default: 'source-code'
 
 jobs:
@@ -39,9 +39,9 @@ jobs:
     - name: credential-scan
       uses: gitleaks/gitleak-action@v2
       with:
-          fail: ${{ inputs.fail }}
-          redact: ${{ inputs.redact }}
-          verbose: ${{ inputs.verbose }}
+        fail: ${{ inputs.fail }}
+        redact: ${{ inputs.redact }}
+        verbose: ${{ inputs.verbose }}
 
 
     - name: check-commit-sign-off
