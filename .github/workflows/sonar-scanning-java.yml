@@ -16,14 +16,14 @@ on:
         default: false
       bug_report_name:
         required: false
-        type: sting
+        type: string
       download_dependency_check_report:
         required: false
         type: boolean
         default: false
       dependency_check_report_name:
         required: false
-        type: sting
+        type: string
       qualitygate:
         required: true
         type: string
