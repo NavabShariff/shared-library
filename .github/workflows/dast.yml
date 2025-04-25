@@ -10,6 +10,12 @@ on:
       download_artifact_name:
         required: true
         type: string
+      image_name:
+        required: true
+        type: string
+      image_tag:
+        required: true
+        type: string
 
 jobs:
   dast:
@@ -34,7 +40,7 @@ jobs:
 
       - name: Start application
         run: |
-          echo "IMAGE_NAME=${{ needs.docker-image-build.outputs.image_name }}:${{ needs.docker-image-build.outputs.image_tag }}" > .env
+          echo "IMAGE_NAME=${{ inputs.image_name }}:${{ inputs.image_tag }}" > .env
           docker compose up -d
 
 
