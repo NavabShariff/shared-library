@@ -16,7 +16,10 @@ on:
       download_artifact_name:
         required: false
         type: string
-
+      save_docker_image:
+        required: false
+        type: boolean
+        default: false
     secrets:
       AWS_IAM_ROLE_ATHENTICATION:
         required: true
@@ -59,3 +62,14 @@ jobs:
           push: true
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr_repo }}:${{ env.IMAGE_TAG }}
+
+      - name: Save Docker image to file
+        if: ${{ inputs.save_docker_image }}
+        run: docker save ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ env.IMAGE_TAG }} | gzip > docker-image.tar.gz
+
+      - name: Upload docker image as artifact
+        if: ${{ inputs.save_docker_image }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: docker-image.tar.gz
