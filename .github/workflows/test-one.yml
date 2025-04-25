@@ -6,10 +6,11 @@ on:
       image_name:
         required: true
         type: string
-      # image_tag:
-      #   required: true
-      #   type: string
-
+    outputs:
+      name:
+        description: "Image name"
+        value: ${{ jobs.test.outputs.name }}
+        
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -22,6 +23,3 @@ jobs:
        echo "IMAGE_NAME=${{ inputs.image_name }}" >> GITHUB_ENV
        echo "IMAGE_NAME=${{ inputs.image_name }}" >> $GITHUB_OUTPUT
     
-    # - name: print
-    #   run: |
-    #    echo "IMAGE_NAME=${{ inputs.image_name }}"
