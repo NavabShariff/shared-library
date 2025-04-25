@@ -12,6 +12,7 @@ on:
       license_scanning:
         required: false
         type: boolean
+        default: false
       license_decision_file:
         required: true
         type: string
