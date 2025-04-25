@@ -8,7 +8,7 @@ on:
         type: boolean
       download_artifact_name:
         required: true
-        type: boolean
+        type: string
       mvn_command:
         required: true
         type: string
