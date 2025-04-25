@@ -17,7 +17,7 @@ on:
         type: boolean
       commit_message:
         required: false
-        type: boolean
+        type: string
       upload_artifacts:
         required: false
         type: boolean
