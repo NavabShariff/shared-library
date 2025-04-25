@@ -23,6 +23,13 @@ on:
     secrets:
       AWS_IAM_ROLE_ATHENTICATION:
         required: true
+    outputs:
+      image_tag:
+        description: "Image name"
+        value: ${{ jobs.docker-image-build.outputs.image_tag }}
+      image_name:
+        description: "Image name"
+        value: ${{ jobs.docker-image-build.outputs.image_name }}
 
 jobs:
   docker-image-build:
