@@ -13,7 +13,7 @@ on:
         required: false
         type: boolean
         default: false
-      artifact_name:
+      download_artifact_name:
         required: false
         type: string
     secrets:
@@ -28,7 +28,7 @@ jobs:
         if: ${{ inputs.download_artifacts }}
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.artifact_name }}
+          name: ${{ inputs.download_artifact_name }}
           path: .
 
       - name: Configure AWS credentials
