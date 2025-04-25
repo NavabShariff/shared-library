@@ -45,8 +45,6 @@ jobs:
         commit-signoff: ${{ inputs.commit_sign_off }}
         message: ${{ inputs.commit_message }}
 
-
-
     - name: check license scan
       if: ${{ inputs.license_scanning }}
       run: |

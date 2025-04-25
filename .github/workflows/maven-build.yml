@@ -1,4 +1,3 @@
-# .github/workflows/reusable-maven.yml
 name: Maven Build Reusable
 
 on:
@@ -10,19 +9,31 @@ on:
       java_version:
         required: true
         type: string
+      checkout:
+        required: false
+        type: boolean
+        default: false
       upload_artifacts:
+        required: false
+        type: boolean
+        default: false
+      upload_artifact_name:
+        required: false
+        type: string
+        default: 'compiled-source-code'
+      download_artifacts:
         required: false
         type: boolean
         default: false
       artifact_name:
         required: false
         type: string
-        default: 'source-code'
 jobs:
   maven-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
+        if: ${{ inputs.checkout }}
         uses: actions/checkout@v3
 
       - name: Set up JDK 17
@@ -31,6 +42,13 @@ jobs:
           java-version: ${{ inputs.java_version}}
           distribution: 'temurin'
 
+      - name: Download Source Code
+        if: ${{ inputs.download_artifacts }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: .
+     
       - name: Execute Maven
         run: mvn ${{ inputs.mvn_command }}
 
@@ -38,5 +56,5 @@ jobs:
         if: ${{ inputs.upload_artifacts }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.artifact_name }}
+          name: ${{ inputs.upload_artifact_name }}
           path: .
