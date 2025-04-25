@@ -1,0 +1,45 @@
+name: bug analysis usin sopt bugs tool
+
+on: 
+  workflow_call:
+    inputs:
+      download_artifacts:
+        required: true
+        type: boolean
+      download_artifact_name:
+        required: true
+        type: boolean
+      mvn_command:
+        required: true
+        type: string
+      java_version:
+        required: true
+        type: string
+      bug_report_name:
+        required: true
+        type: string
+jobs:
+  bug-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.java_version }}
+          distribution: 'temurin'
+    
+      - name: Download compile Source Code
+        if: ${{ inputs.download_artifacts }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.download_artifact_name }}
+          path: .
+
+      - name: Execute Maven
+        run: mvn ${{ inputs.mvn_command }}
+
+      - name: Upload bug report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.bug_report_name }}
+          path: target/*.xml
