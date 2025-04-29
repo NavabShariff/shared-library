@@ -147,12 +147,81 @@ To make this workflow function properly, your `pom.xml` must include the **SpotB
 </plugin>
 ```
 
-> 🔔 Without this plugin, the Maven `spotbugs:spotbugs` goal will not run correctly.
+> `check out the official documentation`:
+[SpotBugs Maven Plugin Documentation](https://spotbugs.readthedocs.io/en/latest/maven.html)
 
 ### 🧩 Integration Strategy
 
 - ✅ Use this workflow after a successful Maven build stage (`maven-build.yml`) where compiled source is uploaded.
 - ✅ Pass in the same artifact name used during upload in the build stage.
 - ✅ Use the uploaded report artifact in downstream workflows like audit or security review.
+
+</details>
+
+
+<details>
+<summary><strong>🛠️ dependency-check.yml</strong> — Dependency check using OWASP Dependency Check</summary>
+
+### 📄 About
+
+This reusable workflow performs a dependency check using the `OWASP Dependency Check` Maven plugin to scan for vulnerabilities in your project's dependencies. It optionally downloads source code artifacts, executes the Maven command, and uploads the resulting dependency check report.
+
+### 🔧 Usage
+
+```yaml
+jobs:
+  dependency-check:
+    uses: NavabShariff/shared-library/.github/workflows/dependency-check.yml@main
+    with:
+      mvn_command: 'clean verify'
+      java_version: '17'
+      download_artifacts: true
+      download_artifact_name: 'source-code'
+      dependency_report_name: 'dependency-check-report'
+```
+
+### 🎛️ Inputs
+
+| Name                     | Type    | Required | Default               | Description |
+|--------------------------|---------|----------|-----------------------|-------------|
+| `mvn_command`            | string  | ✅ Yes  | –                     | Maven command to execute (e.g., `clean verify`) |
+| `java_version`           | string  | ✅ Yes  | –                     | Java version (e.g., `11`, `17`) |
+| `download_artifacts`     | boolean | ✅ Yes  | –                     | Whether to download previously uploaded source code artifacts (from earlier stages) |
+| `download_artifact_name` | string  | ✅ Yes  | –                     | Name of the artifact to download |
+| `dependency_report_name` | string  | No  | –                     | Name to use for the uploaded dependency check report artifact (e.g., `dependency-check-report`) |
+
+### 🧩 Integration Strategy
+
+- ✅ Use `download_artifacts` when consuming source code uploaded in the `pre-checks` or build stage.
+- ✅ Use `dependency_report_name` to upload the OWASP Dependency Check report for visibility and further actions.
+- ✅ No need to build or compile code for this stage; plain source code is sufficient. Therefore, you can run this stage in parallel with the build stage to reduce pipeline execution time.
+
+### ⚙️ Maven Plugin Configuration
+
+To run the OWASP Dependency Check in your Maven project, you need to add the following plugin to your `pom.xml`:
+
+```xml
+<plugin>
+    <groupId>org.owasp</groupId>
+    <artifactId>dependency-check-maven</artifactId>
+    <version>12.1.0</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>check</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <formats>
+        <format>HTML</format>
+        </formats>
+        <outputDirectory>${project.basedir}</outputDirectory>
+    </configuration>
+</plugin>
+```
+
+> `check out the official documentation`:  
+[OWASP Dependency Check Maven Plugin Documentation](https://jeremylong.github.io/DependencyCheck/dependency-check-maven/index.html)
 
 </details>
