@@ -4,11 +4,11 @@ on:
   workflow_call:
     inputs:
       download_artifacts:
-        required: false
+        required: true
         type: boolean
         default: false
       artifact_name:
-        required: false
+        required: true
         type: string
 
 jobs:
@@ -21,9 +21,6 @@ jobs:
         with:
           name: ${{ inputs.artifact_name }}
           path: .
-
-      - name: Remove target folder
-        run: rm -rf ./target
 
       - name: Login to GHCR
         uses: docker/login-action@v3

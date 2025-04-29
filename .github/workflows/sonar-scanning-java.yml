@@ -4,11 +4,11 @@ on:
   workflow_call:
     inputs:
       download_artifacts:
-        required: false
+        required: true
         type: boolean
-        default: false
+        default: true
       download_artifact_name:
-        required: false
+        required: true
         type: string
       download_bug_report:
         required: false

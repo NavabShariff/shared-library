@@ -9,13 +9,10 @@ on:
       aws_region:
         required: true
         type: string
-      download_artifacts:
+      critical_threshold:
         required: false
-        type: boolean
-        default: false
-      download_artifact_name:
-        required: false
-        type: string
+        type: number
+        default: 5
     secrets:
       AWS_IAM_ROLE_ATHENTICATION:
         required: true
@@ -24,13 +21,6 @@ jobs:
   ecr-image-scan:
     runs-on: ubuntu-latest
     steps:
-      - name: Download Source Code
-        if: ${{ inputs.download_artifacts }}
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ inputs.download_artifact_name }}
-          path: .
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -47,6 +37,38 @@ jobs:
           IMAGE_TAG=${{ github.ref_name }}-$(echo $GITHUB_SHA | head -c 8)
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
-      - name: Run Image Scan Script
+      - name: Run ECR Vulnerability Scan
         run: |
-          chmod +x ./ecr-image-scan.sh && ./ecr-image-scan.sh ${{ inputs.ecr_repo }} ${{ env.IMAGE_TAG }} ${{ inputs.aws_region }}
+          set -e
+          ECR_REPO="${{ inputs.ecr_repo }}"
+          IMAGE_TAG="${{ env.IMAGE_TAG }}"
+          REGION="${{ inputs.aws_region }}"
+          THRESHOLD="${{ inputs.critical_threshold }}"
+
+          echo "Starting ECR Vulnerability Scan Check for: $ECR_REPO:$IMAGE_TAG ($REGION)"
+
+          aws ecr wait image-scan-complete \
+              --region "$REGION" \
+              --repository-name "$ECR_REPO" \
+              --image-id imageTag="$IMAGE_TAG"
+
+          echo "Scan completed. Fetching findings..."
+
+          SCAN_FINDINGS=$(aws ecr describe-image-scan-findings \
+              --region "$REGION" \
+              --repository-name "$ECR_REPO" \
+              --image-id imageTag="$IMAGE_TAG" | jq '.imageScanFindings.findingSeverityCounts')
+
+          CRITICAL=$(echo "$SCAN_FINDINGS" | jq '.CRITICAL // 0')
+
+          echo "=== Vulnerabilities Summary ==="
+          echo "CRITICAL: $CRITICAL"
+          echo "Threshold: $THRESHOLD"
+          echo "==============================="
+
+          if [[ "$CRITICAL" -gt "$THRESHOLD" ]]; then
+            echo "Image has $CRITICAL CRITICAL vulnerabilities! Failing pipeline."
+            exit 1
+          fi
+
+          echo "Image passed vulnerability check."
