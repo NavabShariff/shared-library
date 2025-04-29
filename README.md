@@ -102,7 +102,7 @@ jobs:
 
 ### 📄 About
 
-This reusable workflow performs bug analysis using [SpotBugs](https://spotbugs.github.io/) on a Maven project. It supports downloading previously compiled code artifacts, executing the SpotBugs analysis, and uploading the resulting report file for further review or integration in later CI/CD stages.
+This reusable workflow performs Bug Analysis analysis using [SpotBugs](https://spotbugs.github.io/) on a Maven project. It supports downloading previously compiled code artifacts, executing the SpotBugs analysis, and uploading the resulting report file for further review or integration in later CI/CD stages.
 
 ### 🔧 Usage
 
@@ -126,7 +126,28 @@ jobs:
 | `download_artifact_name` | string  | ✅ Yes  | –       | Name of the artifact to download |
 | `mvn_command`            | string  | ✅ Yes  | –       | Maven command to execute (e.g., `spotbugs:spotbugs`) |
 | `java_version`           | string  | ✅ Yes  | –       | Java version to set up before executing Maven |
-| `bug_report_name`        | string  | ✅ Yes  | –       | Name to use for the uploaded bug report artifact |
+| `bug_report_name`        | string  | ✅ Yes  | –       | Name to use for the uploaded bug report artifact. 💡 Suggestion: use predefined GitHub Action variables (e.g., `${{ github.event.repository.name }}-bug-report`) to avoid hardcoding this value per project. |
+
+### 📦 Maven Plugin Requirement
+
+To make this workflow function properly, your `pom.xml` must include the **SpotBugs Maven plugin** as shown below:
+
+```xml
+<plugin>
+  <groupId>com.github.spotbugs</groupId>
+  <artifactId>spotbugs-maven-plugin</artifactId>
+  <version>4.7.3.0</version>
+  <configuration>
+    <effort>Max</effort>
+    <failOnError>false</failOnError>
+    <threshold>Low</threshold>
+    <xmlOutput>true</xmlOutput>
+    <outputDirectory>${project.build.directory}</outputDirectory>
+  </configuration>
+</plugin>
+```
+
+> 🔔 Without this plugin, the Maven `spotbugs:spotbugs` goal will not run correctly.
 
 ### 🧩 Integration Strategy
 
