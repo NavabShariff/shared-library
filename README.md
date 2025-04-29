@@ -93,6 +93,45 @@ jobs:
 
 - ✅ Use `download_artifacts` when consuming source code uploaded in the `pre-checks` stage.
 - ✅ Use `upload_artifacts` to pass compiled JARs or other build outputs to downstream jobs (e.g., for BUG analysis, SCA, Or deployment).
-- ❗If `checkout` is `true`, repository code is cloned directly; otherwise, assume source is provided via `download_artifacts`.
+- ❗If `checkout` is `true`, repository code is cloned directly; otherwise, assume source code is provided via `download_artifacts`.
+
+</details>
+
+<details>
+<summary><strong>🐞 bug-analysis.yml</strong> — Java static bug analysis using SpotBugs</summary>
+
+### 📄 About
+
+This reusable workflow performs bug analysis using [SpotBugs](https://spotbugs.github.io/) on a Maven project. It supports downloading previously compiled code artifacts, executing the SpotBugs analysis, and uploading the resulting report file for further review or integration in later CI/CD stages.
+
+### 🔧 Usage
+
+```yaml
+jobs:
+  bug-analysis:
+    uses: NavabShariff/shared-library/.github/workflows/bug-analysis.yml@main
+    with:
+      download_artifacts: true
+      download_artifact_name: 'compiled-source-code'
+      mvn_command: 'spotbugs:spotbugs'
+      java_version: '17'
+      bug_report_name: 'spotbugs-report'
+```
+
+### 🎛️ Inputs
+
+| Name                     | Type    | Required | Default | Description |
+|--------------------------|---------|----------|---------|-------------|
+| `download_artifacts`     | boolean | ✅ Yes  | –       | Whether to download previously uploaded source code artifact |
+| `download_artifact_name` | string  | ✅ Yes  | –       | Name of the artifact to download |
+| `mvn_command`            | string  | ✅ Yes  | –       | Maven command to execute (e.g., `spotbugs:spotbugs`) |
+| `java_version`           | string  | ✅ Yes  | –       | Java version to set up before executing Maven |
+| `bug_report_name`        | string  | ✅ Yes  | –       | Name to use for the uploaded bug report artifact |
+
+### 🧩 Integration Strategy
+
+- ✅ Use this workflow after a successful Maven build stage (`maven-build.yml`) where compiled source is uploaded.
+- ✅ Pass in the same artifact name used during upload in the build stage.
+- ✅ Use the uploaded report artifact in downstream workflows like audit or security review.
 
 </details>
