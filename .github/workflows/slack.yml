@@ -25,30 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - test
-    outputs:
-      status: ${{ steps.set-status.outputs.status }}
-      failed_stage: ${{ steps.set-status.outputs.failed_stage }}
-
     steps:
-      - name: Determine Status and Failed Stage
+      - name: Set Output
         id: set-status
         run: |
-          echo "Checking job results..."
-
-          status="success"
-          failed_stage=""
-
-          for stage in test; do
-            result="${{ needs[stage].result }}"
-            if [ "$result" == "failure" ]; then
-              status="failure"
-              failed_stage="$stage"
-              break
-            fi
-          done
-
-          echo "status=$status" >> "$GITHUB_OUTPUT"
-          echo "failed_stage=$failed_stage" >> "$GITHUB_OUTPUT"
+          echo "status=${{ needs.test.result == 'failure' && 'failure' || 'success' }}" >> $GITHUB_OUTPUT
+          echo "failed_stage=${{ needs.test.result == 'failure' && 'test' || '' }}" >> $GITHUB_OUTPUT
 
       - name: Send Slack Notification
         uses: slackapi/slack-github-action@v2.0.0
