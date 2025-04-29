@@ -584,3 +584,49 @@ This workflow assumes a **three-tier GitOps environment model**:
 - No changes are committed if the tag value has not changed (`git commit` is skipped with a message).
 
 </details>
+
+
+<details>
+<summary><strong>📢 slack-alert.yml</strong> — Send Slack notifications on workflow success or failure</summary>
+
+### 📄 About
+
+This reusable GitHub Actions workflow sends formatted Slack notifications when a workflow run succeeds or fails. It is designed to be used as a `workflow_call` in downstream pipelines, providing visibility into CI/CD pipeline results via Slack using an [incoming webhook](https://api.slack.com/messaging/webhooks).
+
+### 🔧 Usage
+
+```yaml
+jobs:
+  notify:
+    uses: NavabShariff/shared-library/.github/workflows/slack-alert.yml@main
+    with:
+      commit_author_name: ${{ github.event.pusher.name }}
+      commit_message: ${{ github.event.head_commit.message }}
+      commit_id: ${{ github.sha }}
+      run_id: ${{ github.run_id }}
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+```
+
+### 🎛️ Inputs
+
+| Name                 | Type   | Required | Description |
+|----------------------|--------|----------|-------------|
+| `commit_author_name` | string | ✅ Yes   | Name of the commit author. Use `${{ github.event.pusher.name }}` to fetch dynamically. |
+| `commit_message`     | string | ✅ Yes   | Commit message. Use `${{ github.event.head_commit.message }}` to fetch dynamically. |
+| `commit_id`          | string | ✅ Yes   | Commit SHA. Use `${{ github.sha }}` to fetch dynamically. |
+| `run_id`             | string | ✅ Yes   | GitHub Actions run ID. Use `${{ github.run_id }}` to fetch dynamically. |
+
+### 🔐 Secrets
+
+| Name                | Required | Description |
+|---------------------|----------|-------------|
+| `SLACK_WEBHOOK_URL` | ✅ Yes   | Slack Incoming Webhook URL to post messages |
+
+### 📤 Behavior
+
+- ✅ Sends a formatted Slack message on **success** of the parent workflow, including author, branch, commit, and message details.
+- ❌ Sends a different message on **failure** of the parent workflow with the same commit context.
+- 🔗 Includes a clickable button linking directly to the GitHub Actions job run.
+
+</details>
