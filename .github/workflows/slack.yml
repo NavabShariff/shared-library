@@ -38,7 +38,7 @@ jobs:
           status="success"
           failed_stage=""
 
-          for stage in pre_checks build bug_analysis dependency_check sca docker_build_push docker_image_scan dast trigger_cd; do
+          for stage in test; do
             result="${{ needs[stage].result }}"
             if [ "$result" == "failure" ]; then
               status="failure"
