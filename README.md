@@ -1,5 +1,8 @@
 <details>
-<summary><strong>✅ pre-checks.yml</strong> — Run Credential Scanning, commit validation, license scanning and upload source code</summary>
+<summary><strong>✅ pre-checks.yml</strong> — Run Credential Scanning, Commit validation, License scanning and Upload source code</summary>
+
+
+### 📄 About
 
 This reusable workflow performs:
 
