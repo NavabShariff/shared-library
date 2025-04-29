@@ -52,3 +52,47 @@ Subsequent jobs can retrieve and reuse it without cloning again:
 ```
 
 </details>
+
+<details>
+<summary><strong>🔨 maven-build.yml</strong> — Java/Maven build runner with optional artifact download/upload</summary>
+
+### 📄 About
+
+
+This reusable workflow compiles Java projects using Maven. It optionally downloads source code artifacts (from earlier stages), performs the Maven command, and can optionally upload the resulting build artifacts.
+
+### 🔧 Usage
+
+```yaml
+jobs:
+  build:
+    uses: NavabShariff/shared-library/.github/workflows/maven-build.yml@main
+    with:
+      mvn_command: 'clean install'
+      java_version: '17'
+      checkout: false
+      download_artifacts: true
+      download_artifact_name: 'source-code'
+      upload_artifacts: true
+      upload_artifact_name: 'compiled-source-code'
+```
+
+### 🎛️ Inputs
+
+| Name                     | Type    | Required | Default               | Description |
+|--------------------------|---------|----------|-----------------------|-------------|
+| `mvn_command`            | string  | ✅ Yes  | –                     | Maven command to execute (e.g., `clean install`) |
+| `java_version`           | string  | ✅ Yes  | –                     | Java version (e.g., `11`, `17`) |
+| `checkout`               | boolean | No       | `false`               | Whether to run `actions/checkout` (if code isn't downloaded as artifact) |
+| `upload_artifacts`       | boolean | No       | `false`               | Whether to upload the compiled source code |
+| `upload_artifact_name`   | string  | No       | `compiled-source-code`| Name of the artifact to upload |
+| `download_artifacts`     | boolean | No       | `false`               | Whether to download previously uploaded source code. Enable this if you are not cloning the source code in this stage (i.e., `checkout` is `false`). |
+| `download_artifact_name` | string  | No       | –                     | Name of the artifact to download |
+
+### 🧩 Integration Strategy
+
+- ✅ Use `download_artifacts` when consuming source code uploaded in the `pre-checks` stage.
+- ✅ Use `upload_artifacts` to pass compiled JARs or other build outputs to downstream jobs (e.g., for BUG analysis, SCA, Or deployment).
+- ❗If `checkout` is `true`, repository code is cloned directly; otherwise, assume source is provided via `download_artifacts`.
+
+</details>
