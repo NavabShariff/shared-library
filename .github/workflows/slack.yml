@@ -1,9 +1,6 @@
 on:
   workflow_call:
     inputs:
-      channel_name:
-        required: false
-        type: string
       commit_author_name:
         required: true
         type: string
@@ -21,43 +18,92 @@ on:
         required: true
 
 jobs:
-  notify:
+  success:
+    if: ${{ success() }}
     runs-on: ubuntu-latest
-    needs:
-      - test
     steps:
-      - name: Set Output
-        id: set-status
-        run: |
-          echo "status=${{ needs.test.result == 'failure' && 'failure' || 'success' }}" >> $GITHUB_OUTPUT
-          echo "failed_stage=${{ needs.test.result == 'failure' && 'test' || '' }}" >> $GITHUB_OUTPUT
-
-      - name: Send Slack Notification
-        uses: slackapi/slack-github-action@v2.0.0
+      - name: Notify Slack on Success
+        uses: slackapi/slack-github-action@v1.24.0
         with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
           payload: |
             {
-              "channel": "${{ inputs.channel_name }}",
-              "text": "${{ steps.set-status.outputs.status == 'success' && '✅ Build Successful!' || format('❌ Build Failed at stage: {0}', steps.set-status.outputs.failed_stage) }}",
               "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "✅ Build Succeeded and Triggered for Deployment",
+                    "emoji": true
+                  }
+                },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{ steps.set-status.outputs.status == 'success' && format(':rocket: *Build Succeeded*\nBranch: `{0}`\nCommit: `{1}`\nMessage: _{2}_', github.ref_name, inputs.commit_id, inputs.commit_message) || format(':x: *Build Failed*\nStage: `{0}`\nBranch: `{1}`\nCommit: `{2}`\nMessage: _{3}_', steps.set-status.outputs.failed_stage, github.ref_name, inputs.commit_id, inputs.commit_message) }}"
-                  },
-                  "accessory": {
-                    "type": "button",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "View Run",
-                      "emoji": true
-                    },
-                    "url": "https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run_id }}",
-                    "action_id": "run"
+                    "text": "*Author:* `${{ inputs.commit_author_name }}`\n*Branch:* `${{ github.ref_name }}`\n*Commit ID:* `${{ inputs.commit_id }}`\n*Message:* _${{ inputs.commit_message }}_"
                   }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job",
+                        "emoji": true
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ inputs.run_id }}"
+                    }
+                  ]
                 }
               ]
             }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+  failure:
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack on Failure
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "❌ Pipeline Failed",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Author:* `${{ inputs.commit_author_name }}`\n*Branch:* `${{ github.ref_name }}`\n*Commit ID:* `${{ inputs.commit_id }}`\n*Message:* _${{ inputs.commit_message }}_"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job",
+                        "emoji": true
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ inputs.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
