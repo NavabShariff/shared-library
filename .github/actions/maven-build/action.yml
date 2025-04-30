@@ -18,4 +18,5 @@ runs:
       distribution: 'temurin'
 
   - name: Execute Maven
+    shell: bash
     run: mvn ${{ inputs.mvn_command }}
