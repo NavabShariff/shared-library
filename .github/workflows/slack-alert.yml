@@ -64,12 +64,11 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
-
   failure:
     if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
-      - name: Notify Slack on Failure
+      - name: Notify Slack on Success
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
