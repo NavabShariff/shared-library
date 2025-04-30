@@ -19,8 +19,9 @@ on:
         required: true
 
 jobs:
-  success:
-    if: ${{ success() }}
+
+  failure:
+    if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
       - name: Notify Slack on Success
@@ -33,7 +34,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "✅ Build Succeeded and Triggered for Deployment",
+                    "text": "❌ Pipeline Failed",
                     "emoji": true
                   }
                 },
@@ -63,9 +64,9 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-
-  failure:
-    if: ${{ failure() }}
+          
+  success:
+    if: ${{ success() }}
     runs-on: ubuntu-latest
     steps:
       - name: Notify Slack on Success
@@ -78,7 +79,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "❌ Pipeline Failed",
+                    "text": "✅ Build Succeeded and Triggered for Deployment",
                     "emoji": true
                   }
                 },
