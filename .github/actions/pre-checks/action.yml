@@ -54,6 +54,7 @@ runs:
         fi
 
     - name: Clean up scan artifacts
+      shell: bash
       run: |
         rm -rf ~/.gem
         rm -rf .bundle
