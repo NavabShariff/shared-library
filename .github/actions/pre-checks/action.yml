@@ -26,17 +26,18 @@ runs:
   using: "composite"
   steps:
     - name: credential-scan
-      if: ${{ inputs.credential_scan == 'true' }}
+      if: ${{ inputs.credential_scan }}
       uses: gitleaks/gitleaks-action@v2
 
     - name: check-commit-sign-off
+      if: ${{ inputs.commit_sign_off }}
       uses: commit-check/commit-check-action@v1
       with:
         commit-signoff: ${{ inputs.commit_sign_off }}
         message: ${{ inputs.commit_message }}
 
     - name: check license scan
-      if: ${{ inputs.license_scanning == 'true' }}
+      if: ${{ inputs.license_scanning }}
       shell: bash
       run: |
         echo "Installing license_finder"
