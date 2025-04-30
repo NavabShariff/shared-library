@@ -3,11 +3,7 @@ name: Build and Push Docker Image to GHCR
 on:
   workflow_call:
     inputs:
-      download_artifacts:
-        required: true
-        type: boolean
-        default: false
-      artifact_name:
+      download_artifact_name:
         required: true
         type: string
 
@@ -16,10 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Source Code
-        if: ${{ inputs.download_artifacts }}
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.artifact_name }}
+          name: ${{ inputs.download_artifact_name }}
           path: .
 
       - name: Login to GHCR

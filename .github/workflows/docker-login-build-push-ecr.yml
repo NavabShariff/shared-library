@@ -9,10 +9,6 @@ on:
       aws_region:
         required: true
         type: string
-      download_artifacts:
-        required: true
-        type: boolean
-        default: false
       download_artifact_name:
         required: true
         type: string
@@ -39,7 +35,6 @@ jobs:
       image_name: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr_repo }}
     steps:
       - name: Download Source Code
-        if: ${{ inputs.download_artifacts }}
         uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.download_artifact_name }}

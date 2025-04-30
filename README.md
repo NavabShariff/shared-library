@@ -269,7 +269,7 @@ These reports are consumed by the `sonar-scanner` during the analysis.
 
 ### 📄 About
 
-This reusable GitHub Actions workflow builds a Docker image and pushes it to Amazon ECR. Optionally, it can download a pre-built source code artifact and save the Docker image as a `.tar.gz` artifact for later use.
+This reusable GitHub Actions workflow builds a Docker image and pushes it to Amazon ECR. Optionally, it can save the Docker image as a `.tar.gz` artifact for later use.
 
 ### 🔧 Usage
 
@@ -280,7 +280,6 @@ jobs:
     with:
       ecr_repo: 'salary-api'
       aws_region: 'ap-south-1'
-      download_artifacts: true
       download_artifact_name: ${{ github.event.repository.name }}
       save_docker_image: true
     secrets:
@@ -293,8 +292,7 @@ jobs:
 |--------------------------|---------|----------|---------|-------------|
 | `ecr_repo`               | string  | ✅ Yes   | –       | ECR repository name where image should be pushed |
 | `aws_region`             | string  | ✅ Yes   | –       | AWS region where the ECR repo exists |
-| `download_artifacts`     | boolean | ✅ Yes   | `false` | Whether to download the compiled source code artifact |
-| `download_artifact_name` | string  | ✅ Yes   |    –    | Name of the source artifact to download eg:- `${{ github.event.repository.name }}` |
+| `download_artifact_name` | string  | ✅ Yes   |    –    | Name of the source artifact to download eg:- `${{ github.event.repository.name }}` Here we are not cloning repo , so you have to provide artifact name to download source code.|
 | `save_docker_image`      | boolean | No       | `false` | If `true`, saves the image as a `.tar.gz` file and uploads it as an artifact |
 
 ### 🔐 Secrets
@@ -341,8 +339,7 @@ jobs:
 
 | Name              | Type    | Required | Default | Description |
 |-------------------|---------|----------|---------|-------------|
-| `download_artifacts` | boolean | ✅ Yes   | `false` | Whether to download the built artifact (source) before building the image |
-| `artifact_name`      | string  | ✅ Yes   | –       | Name of the artifact to download |
+| `download_artifact_name`      | string  | ✅ Yes   | –       | Name of the artifact to download eg:- `${{ github.event.repository.name }}` Here we are not cloning repo , so you have to provide artifact name to download source code.|
 
 ### 🔐 Secrets
 
@@ -387,6 +384,13 @@ jobs:
 - Waits for the ECR scan results.
 - Parses scan output to check for critical vulnerabilities.
 - Fails the pipeline if the number of critical issues exceeds the configured threshold.
+
+### ℹ️ **Note**
+This workflow assumes that the Docker image tag follows the convention:  
+```bash
+${{ github.ref_name }}-$(echo $GITHUB_SHA | head -c 8)
+```
+This tag format must match the one used during the Docker build and push process to ensure the correct image is scanned.
 
 ---
 
