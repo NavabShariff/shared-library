@@ -52,3 +52,11 @@ runs:
         else
           echo "All dependencies are approved"
         fi
+
+    - name: Clean up scan artifacts
+      run: |
+        rm -rf ~/.gem
+        rm -rf .bundle
+        rm -rf vendor/
+        rm -rf .license_finder/
+        rm -rf .cache/
