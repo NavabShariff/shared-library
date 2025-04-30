@@ -87,7 +87,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Branch:* `${{ github.ref_name }}`\n*Commit ID:* `${{ github.sha }}`\n*Message:* _${{ github.event.head_commit.message }}_"
+                    "text": ${{ toJson(format('*Author:* `{0}`\\n*Branch:* `{1}`\\n*Commit ID:* `{2}`\\n*Message:* _{3}_', inputs.commit_author_name, github.ref_name, inputs.commit_id, inputs.commit_message)) }}
                   }
                 },
                 {
