@@ -32,7 +32,7 @@ on:
 
 jobs:
   success:
-    if: ${{ inputs.workflow_status == 'failure' }}
+    if: ${{ inputs.workflow_status == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Send Success Notification Email
@@ -61,7 +61,7 @@ jobs:
             Great job! 🚀
 
   failure:
-    if: ${{ inputs.workflow_status == 'success' }}
+    if: ${{ inputs.workflow_status == 'failure' }}
     runs-on: ubuntu-latest
     steps:
       - name: Send Failure Notification Email
