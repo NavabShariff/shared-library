@@ -41,8 +41,8 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": '*Author:* `${{ inputs.commit_author_name }}`\\n*Branch:* `${{ github.ref_name }}`\\n*Commit ID:* `${{ inputs.commit_id }}`\\n*Message:* ${{ toJson(inputs.commit_message) }}'
-                  } 
+                    "text": "*Author:* `${{ inputs.commit_author_name }}`\n*Branch:* `${{ github.ref_name }}`\n*Commit ID:* `${{ inputs.commit_id }}`\n*Message:* _${{ inputs.commit_message }}_"
+                  }
                 },
                 {
                   "type": "actions",
@@ -86,7 +86,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Author:* `${{ inputs.commit_author_name }}`\\n*Branch:* `${{ github.ref_name }}`\\n*Commit ID:* `${{ inputs.commit_id }}`\\n*Message:* ${{ toJson(inputs.commit_message) }}"
+                    "text": "*Author:* `${{ inputs.commit_author_name }}`\n*Branch:* `${{ github.ref_name }}`\n*Commit ID:* `${{ inputs.commit_id }}`\n*Message:* _${{ inputs.commit_message }}_"
                   }
                 },
                 {
