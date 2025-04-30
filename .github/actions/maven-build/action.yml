@@ -1,0 +1,21 @@
+name: Maven Build Reusable
+description: "Performs mavne build, you can do compile or package or run any maven command"
+inputs:
+  mvn_command:
+    required: true
+    type: string
+  java_version:
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+  - name: Set up JDK 17
+    uses: actions/setup-java@v3
+    with:
+      java-version: ${{ inputs.java_version}}
+      distribution: 'temurin'
+
+  - name: Execute Maven
+    run: mvn ${{ inputs.mvn_command }}

@@ -63,10 +63,8 @@ As part of the `pre-checks` action, a cleanup step has been added to reduce arti
 
 - `.git/` – Git history, which can be large
 - `venv/` – Python virtual environment
-- `.cache/` – Cached files from tools
-- `.license_finder/` – Temporary license scanner data
 
-This helps keep the uploaded artifacts small and clean, especially in workflows that archive the working directory or scan outputs.
+This helps keep the uploaded artifacts small and clean.
 
 </details>
 
