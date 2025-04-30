@@ -19,7 +19,6 @@ on:
         required: true
 
 jobs:
-
   failure:
     if: ${{ failure() }}
     runs-on: ubuntu-latest
@@ -64,7 +63,7 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-          
+
   success:
     if: ${{ success() }}
     runs-on: ubuntu-latest
