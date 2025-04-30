@@ -14,13 +14,17 @@ on:
       run_id:
         required: true
         type: string
+      workflow_status:
+        required: true
+        type: string
     secrets:
       SLACK_WEBHOOK_URL:
         required: true
 
 jobs:
   failure:
-    if: ${{ failure() }}
+    if: ${{ inputs.workflow_status == 'failure' }}
+    # if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
       - name: Notify Slack on Success
@@ -65,7 +69,8 @@ jobs:
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
 
   success:
-    if: ${{ success() }}
+    if: ${{ inputs.workflow_status == 'success' }}
+    # if: ${{ success() }}
     runs-on: ubuntu-latest
     steps:
       - name: Notify Slack on Success
