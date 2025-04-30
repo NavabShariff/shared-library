@@ -14,6 +14,7 @@ runs:
   using: "composite"
   steps:
   - name: Run SonarQube Scan
+    shell: bash
     run: |
       sonar-scanner \
         -Dsonar.host.url=${{ env.SONAR_HOST_URL }} \
