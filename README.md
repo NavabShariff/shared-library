@@ -585,14 +585,21 @@ This reusable GitHub Actions workflow sends formatted Slack notifications when a
 jobs:
   notify:
     uses: NavabShariff/shared-library/.github/workflows/slack-alert.yml@main
+    needs: [<your job stages]
+    if: always()
     with:
       commit_author_name: ${{ github.event.pusher.name }}
       commit_message: ${{ github.event.head_commit.message }}
       commit_id: ${{ github.sha }}
       run_id: ${{ github.run_id }}
+      workflow_status: >-
+        ${{
+          contains(join(needs.*.result, ','), 'failure') && 'failure' || 'success'
+        }}
     secrets:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
+
 
 ### 🎛️ Inputs
 
@@ -602,6 +609,8 @@ jobs:
 | `commit_message`     | string | ✅ Yes   | Commit message. Use `${{ github.event.head_commit.message }}` to fetch dynamically. |
 | `commit_id`          | string | ✅ Yes   | Commit SHA. Use `${{ github.sha }}` to fetch dynamically. |
 | `run_id`             | string | ✅ Yes   | GitHub Actions run ID. Use `${{ github.run_id }}` to fetch dynamically. |
+| `workflow_status`    | string | ✅ Yes   | Status of the workflow execution. Should be `'success'` or `'failure'`, typically derived from `contains(join(needs.*.result, ','), 'failure')`. |
+
 
 ### 🔐 Secrets
 

@@ -24,7 +24,6 @@ on:
 jobs:
   failure:
     if: ${{ inputs.workflow_status == 'failure' }}
-    # if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
       - name: Notify Slack on Success
@@ -70,7 +69,6 @@ jobs:
 
   success:
     if: ${{ inputs.workflow_status == 'success' }}
-    # if: ${{ success() }}
     runs-on: ubuntu-latest
     steps:
       - name: Notify Slack on Success
