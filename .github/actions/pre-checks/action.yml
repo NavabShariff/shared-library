@@ -53,13 +53,8 @@ runs:
           echo "All dependencies are approved"
         fi
 
-
-     
-    # - name: Clean up Cache  and License Finder dependencies
-    #   shell: bash
-    #   run: |
-    #     rm -rf .git
-    #     rm -rf venv
-    #     rm -rf target
-    #     rm -rf .cache
-    #     rm -rf .license_finder
+    - name: Clean up Cache  and License Finder dependencies
+      shell: bash
+      run: |
+        rm -rf .git
+        rm -rf venv
