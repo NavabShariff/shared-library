@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: .
-          
+
       - name: Run Pre-checks
         uses: NavabShariff/shared-library/.github/actions/pre-checks@main
         with:
@@ -54,6 +54,19 @@ jobs:
 - **Credential Scan**: Executes Gitleaks to find secrets in the codebase.
 - **Commit Validation**: Verifies commits for proper sign-off or message format.
 - **License Scan**: Uses `license_finder` to verify all dependencies are approved based on a provided decisions file.
+
+
+
+### 🧼 Cleanup Step (Post License Scan)
+
+As part of the `pre-checks` action, a cleanup step has been added to reduce artifact size and avoid uploading unnecessary files. This step runs automatically **after license scanning** and removes the following directories:
+
+- `.git/` – Git history, which can be large
+- `venv/` – Python virtual environment
+- `.cache/` – Cached files from tools
+- `.license_finder/` – Temporary license scanner data
+
+This helps keep the uploaded artifacts small and clean, especially in workflows that archive the working directory or scan outputs.
 
 </details>
 
