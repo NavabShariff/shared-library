@@ -68,48 +68,67 @@ This helps keep the uploaded artifacts small and clean.
 
 </details>
 
-
 <details>
-<summary><strong>🔨 maven-build.yml</strong> — Java/Maven build runner with optional artifact download/upload</summary>
+<summary><strong>⚙️ Java Maven Reusable</strong> — Composite GitHub Action to run Maven commands with specified Java version</summary>
 
 ### 📄 About
 
+This composite GitHub Action allows you to run any [Maven](https://maven.apache.org/) command (`compile`, `package`, `test`, `bug analysis`, `dependency checks`etc.) using a specified Java version. It is useful for standardizing Maven builds across multiple repositories by centralizing this logic in a shared GitHub Action.
 
-This reusable workflow compiles Java projects using Maven. It optionally downloads source code artifacts (from earlier stages), performs the Maven command, and can optionally upload the resulting build artifacts.
 
 ### 🔧 Usage
 
 ```yaml
 jobs:
-  build:
-    uses: NavabShariff/shared-library/.github/workflows/maven-build.yml@main
-    with:
-      mvn_command: 'clean install'
-      java_version: '17'
-      checkout: false
-      download_artifacts: true
-      download_artifact_name: 'source-code'
-      upload_artifacts: true
-      upload_artifact_name: 'compiled-source-code'
+  maven_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Maven Build
+        uses: NavabShariff/shared-library/.github/actions/java-maven@main
+        with:
+          java_version: '17'
+          mvn_command: clean compile
 ```
+
 
 ### 🎛️ Inputs
 
-| Name                     | Type    | Required | Default               | Description |
-|--------------------------|---------|----------|-----------------------|-------------|
-| `mvn_command`            | string  | ✅ Yes  | –                     | Maven command to execute (e.g., `clean install`) |
-| `java_version`           | string  | ✅ Yes  | –                     | Java version (e.g., `11`, `17`) |
-| `checkout`               | boolean | No       | `false`               | Whether to run `actions/checkout` (if code isn't downloaded as artifact) |
-| `upload_artifacts`       | boolean | No       | `false`               | Whether to upload the compiled source code |
-| `upload_artifact_name`   | string  | No       | `compiled-source-code`| Name of the artifact to upload |
-| `download_artifacts`     | boolean | No       | `false`               | Whether to download previously uploaded source code. Enable this if you are not cloning the source code in this stage (i.e., `checkout` is `false`). |
-| `download_artifact_name` | string  | No       | –                     | Name of the artifact to download |
+| Name           | Type   | Required | Default         | Description                                |
+|----------------|--------|----------|------------------|--------------------------------------------|
+| `java_version` | string | ✅ Yes   | `17`             | Java version to use (e.g., `11`, `17`)     |
+| `mvn_command`  | string | ✅ Yes   | `clean compile`  | Maven command to run (e.g., `clean install`, `compile`, `test`) |
 
-### 🧩 Integration Strategy
 
-- ✅ Use `download_artifacts` when consuming source code uploaded in the `pre-checks` stage.
-- ✅ Use `upload_artifacts` to pass compiled JARs or other build outputs to downstream jobs (e.g., for BUG analysis, SCA, Or deployment).
-- ❗If `checkout` is `true`, repository code is cloned directly; otherwise, assume source code is provided via `download_artifacts`.
+### ⚙️ How It Works
+
+1. **Java Setup**: Uses [`actions/setup-java`](https://github.com/actions/setup-java) to configure the Java environment with the given version.
+2. **Maven Execution**: Runs the specified Maven command using the provided input (`mvn_command`).
+
+
+### 🐞 Bug-analysis:
+
+To make this workflow function properly to run bug-analysis , your `pom.xml` must include the **SpotBugs Maven plugin** as shown below:
+
+```xml
+<plugin>
+  <groupId>com.github.spotbugs</groupId>
+  <artifactId>spotbugs-maven-plugin</artifactId>
+  <version>4.7.3.0</version>
+  <configuration>
+    <effort>Max</effort>
+    <failOnError>false</failOnError>
+    <threshold>Low</threshold>
+    <xmlOutput>true</xmlOutput>
+    <outputDirectory>${project.build.directory}</outputDirectory>
+  </configuration>
+</plugin>
+```
+
+> `check out the official documentation`:
+[SpotBugs Maven Plugin Documentation](https://spotbugs.readthedocs.io/en/latest/maven.html)
 
 </details>
 
