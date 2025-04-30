@@ -41,7 +41,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Author:* `${{ inputs.commit_author_name }}`\n*Branch:* `${{ github.ref_name }}`\n*Commit ID:* `${{ inputs.commit_id }}`\n*Message:* _${{ inputs.commit_message }}_"
+                    "text": "*Branch:* `${{ github.ref_name }}`\n*Commit ID:* `${{ github.sha }}`\n*Message:* _${{ github.event.head_commit.message }}_"
                   }
                 },
                 {
@@ -86,7 +86,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Author:* `${{ inputs.commit_author_name }}`\n*Branch:* `${{ github.ref_name }}`\n*Commit ID:* `${{ inputs.commit_id }}`\n*Message:* _${{ inputs.commit_message }}_"
+                    "text": "*Branch:* `${{ github.ref_name }}`\n*Commit ID:* `${{ github.sha }}`\n*Message:* _${{ github.event.head_commit.message }}_"
                   }
                 },
                 {
