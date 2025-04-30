@@ -73,7 +73,7 @@ This helps keep the uploaded artifacts small and clean.
 
 ### 📄 About
 
-This composite GitHub Action allows you to run any [Maven](https://maven.apache.org/) command (`compile`, `package`, `test`, `bug analysis`, `dependency checks`etc.) using a specified Java version. It is useful for standardizing Maven builds across multiple repositories by centralizing this logic in a shared GitHub Action.
+This composite GitHub Action allows you to run any [Maven](https://maven.apache.org/) command (`compile`, `package`, `test`, `bug analysis`, `dependency checks` etc.) using a specified Java version. It is useful for standardizing Maven builds across multiple repositories by centralizing this logic in a shared GitHub Action.
 
 
 ### 🔧 Usage
@@ -130,108 +130,25 @@ To make this workflow function properly to run bug-analysis , your `pom.xml` mus
 > `check out the official documentation`:
 [SpotBugs Maven Plugin Documentation](https://spotbugs.readthedocs.io/en/latest/maven.html)
 
-</details>
 
-<details>
-<summary><strong>🐞 bug-analysis.yml</strong> — Java static bug analysis using SpotBugs</summary>
-
-### 📄 About
-
-This reusable workflow performs Bug Analysis analysis using [SpotBugs](https://spotbugs.github.io/) on a Maven project. It supports downloading previously compiled code artifacts, executing the SpotBugs analysis, and uploading the resulting report file for further review or integration in later CI/CD stages.
-
-### 🔧 Usage
+#### 🔧 Usage
 
 ```yaml
 jobs:
-  bug-analysis:
-    uses: NavabShariff/shared-library/.github/workflows/bug-analysis.yml@main
-    with:
-      download_artifacts: true
-      download_artifact_name: 'compiled-source-code'
-      mvn_command: 'spotbugs:spotbugs'
-      java_version: '17'
-      bug_report_name: 'spotbugs-report'
+  maven_build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: run bug analysis
+      uses: NavabShariff/shared-library/.github/actions/java-maven@main
+      with:
+        java_version: '17'
+        mvn_command: com.github.spotbugs:spotbugs-maven-plugin:check
 ```
 
-### 🎛️ Inputs
-
-| Name                     | Type    | Required | Default | Description |
-|--------------------------|---------|----------|---------|-------------|
-| `download_artifacts`     | boolean | ✅ Yes  | –       | Whether to download previously uploaded source code artifact |
-| `download_artifact_name` | string  | ✅ Yes  | –       | Name of the artifact to download |
-| `mvn_command`            | string  | ✅ Yes  | –       | Maven command to execute (e.g., `spotbugs:spotbugs`) |
-| `java_version`           | string  | ✅ Yes  | –       | Java version to set up before executing Maven |
-| `bug_report_name`        | string  | ✅ Yes  | –       | Name to use for the uploaded bug report artifact. 💡 Suggestion: use predefined GitHub Action variables (e.g., `${{ github.event.repository.name }}-bug-report`) to avoid hardcoding this value per project. |
-
-### 📦 Maven Plugin Requirement
-
-To make this workflow function properly, your `pom.xml` must include the **SpotBugs Maven plugin** as shown below:
-
-```xml
-<plugin>
-  <groupId>com.github.spotbugs</groupId>
-  <artifactId>spotbugs-maven-plugin</artifactId>
-  <version>4.7.3.0</version>
-  <configuration>
-    <effort>Max</effort>
-    <failOnError>false</failOnError>
-    <threshold>Low</threshold>
-    <xmlOutput>true</xmlOutput>
-    <outputDirectory>${project.build.directory}</outputDirectory>
-  </configuration>
-</plugin>
-```
-
-> `check out the official documentation`:
-[SpotBugs Maven Plugin Documentation](https://spotbugs.readthedocs.io/en/latest/maven.html)
-
-### 🧩 Integration Strategy
-
-- ✅ Use this workflow after a successful Maven build stage (`maven-build.yml`) where compiled source is uploaded.
-- ✅ Pass in the same artifact name used during upload in the build stage.
-- ✅ Use the uploaded report artifact in downstream workflows like audit or security review.
-
-</details>
-
-
-<details>
-<summary><strong>🛠️ dependency-check.yml</strong> — Dependency check using OWASP Dependency Check</summary>
-
-### 📄 About
-
-This reusable workflow performs a dependency check using the `OWASP Dependency Check` Maven plugin to scan for vulnerabilities in your project's dependencies. It optionally downloads source code artifacts, executes the Maven command, and uploads the resulting dependency check report.
-
-### 🔧 Usage
-
-```yaml
-jobs:
-  dependency-check:
-    uses: NavabShariff/shared-library/.github/workflows/dependency-check.yml@main
-    with:
-      mvn_command: 'clean verify'
-      java_version: '17'
-      download_artifacts: true
-      download_artifact_name: 'source-code'
-      dependency_report_name: 'dependency-check-report'
-```
-
-### 🎛️ Inputs
-
-| Name                     | Type    | Required | Default               | Description |
-|--------------------------|---------|----------|-----------------------|-------------|
-| `mvn_command`            | string  | ✅ Yes  | –                     | Maven command to execute (e.g., `clean verify`) |
-| `java_version`           | string  | ✅ Yes  | –                     | Java version (e.g., `11`, `17`) |
-| `download_artifacts`     | boolean | ✅ Yes  | –                     | Whether to download previously uploaded source code artifacts (from earlier stages) |
-| `download_artifact_name` | string  | ✅ Yes  | –                     | Name of the artifact to download |
-| `dependency_report_name` | string  | No  | –                     | Name to use for the uploaded dependency check report artifact (e.g., `dependency-check-report`) |
-
-### 🧩 Integration Strategy
-
-- ✅ Use `download_artifacts` when consuming source code uploaded in the `pre-checks` or build stage.
-- ✅ Use `dependency_report_name` to upload the OWASP Dependency Check report for visibility and further actions.
-- ✅ No need to build or compile code for this stage; plain source code is sufficient. Therefore, you can run this stage in parallel with the build stage to reduce pipeline execution time.
-
-### ⚙️ Maven Plugin Configuration
+### 🛠️ Dependency Check:
 
 To run the OWASP Dependency Check in your Maven project, you need to add the following plugin to your `pom.xml`:
 
@@ -259,63 +176,93 @@ To run the OWASP Dependency Check in your Maven project, you need to add the fol
 > `check out the official documentation`:  
 [OWASP Dependency Check Maven Plugin Documentation](https://jeremylong.github.io/DependencyCheck/dependency-check-maven/index.html)
 
+#### 🔧 Usage
+
+```yaml
+jobs:
+  maven_build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: run dependency check
+      uses: NavabShariff/shared-library/.github/actions/java-maven@main
+      with:
+        java_version: '17'
+        mvn_command: dependency-check:check
+```
 </details>
 
+
 <details>
-<summary><strong>🔍 sonar-scanning-java.yml</strong> — SonarQube Static Code Analysis for Java Projects</summary>
+<summary><strong>🧪 SonarQube Static Code Analysis</strong> — Composite GitHub Action to perform SonarQube scanning</summary>
 
 ### 📄 About
 
-This reusable GitHub Actions workflow performs static code analysis on Java projects using SonarQube. It optionally downloads compiled source code, SpotBugs and OWASP dependency-check reports and runs the scan using the SonarQube Scanner CLI. 
+This composite GitHub Action runs static code analysis using the **SonarQube CLI**.  
+It is designed to be shared and reused across multiple repositories by including it in your centralized `.github/actions/sonarqube-scan` workflow.
+
+This action expects certain analysis report files to already exist before execution, including:
+
+- ✅ **OWASP Dependency-Check** report (e.g., `dependency-check-report.html`)
+- 🐛 **SpotBugs** report (e.g., `target/spotbugsXml.xml`)
+- 🧪 **JaCoCo coverage** report (e.g., `jacoco.xml`)
+
+Make sure these reports are generated in earlier steps of your workflow before calling this action.
+
+---
 
 ### 🔧 Usage
 
 ```yaml
 jobs:
-  sca:
-    needs: [build, bug_analysis, dependency_check]
-    uses: NavabShariff/shared-library/.github/workflows/sonar-scanning-java.yml@main
-    secrets:
-      SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    with: 
-      download_artifacts: true
-      download_artifact_name: ${{ github.event.repository.name }}-compile-code
-      download_bug_report: true
-      bug_report_name: ${{ github.event.repository.name }}-bug-report
-      download_dependency_check_report: false
-      dependency_check_report_name: ${{ github.event.repository.name }}-dependency-check-report
-      qualitygate: false
+  sonarqube_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SonarQube Analysis
+        uses: NavabShariff/shared-library/.github/actions/sonarqube-scan@main
+        with:
+          qualitygate: 'true'
+        secrets:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 ```
 
 ### 🎛️ Inputs
 
-| Name                            | Type    | Required | Default | Description |
-|---------------------------------|---------|----------|---------|-------------|
-| `download_artifacts`            | boolean | ✅ Yes   | `true` | Whether to download compiled source code artifacts |
-| `download_artifact_name`        | string  | No       | –       | Name of the compiled code artifact to download |
-| `download_bug_report`           | boolean | No       | `false` | Whether to download the SpotBugs bug report |
-| `bug_report_name`               | string  | No       | –       | Name of the SpotBugs bug report artifact (Suggestion: use predefined GitHub action vars like `${{ github.event.repository.name }}-bug-report`) |
-| `download_dependency_check_report` | boolean | No       | `false` | Whether to download the OWASP dependency-check report |
-| `dependency_check_report_name`  | string  | No       | –       | Name of the dependency-check artifact |
-| `qualitygate`                   | string  | ✅ Yes    | –       | Whether to wait for SonarQube quality gate result (`true`/`false`) |
+| Name          | Type   | Required | Default | Description                                           |
+|---------------|--------|----------|---------|-------------------------------------------------------|
+| `qualitygate` | string | ✅ Yes   | `true`  | Whether to wait for the quality gate status (`true` or `false`) |
+
 
 ### 🔐 Secrets
 
-| Name              | Required | Description |
-|-------------------|----------|-------------|
-| `SONAR_HOST_URL`  | ✅ Yes | URL of your SonarQube server |
-| `SONAR_TOKEN`     | ✅ Yes | Authentication token for SonarQube |
+| Name              | Required | Description                         |
+|-------------------|----------|-------------------------------------|
+| `SONAR_HOST_URL`  | ✅ Yes   | URL of the SonarQube server         |
+| `SONAR_TOKEN`     | ✅ Yes   | Authentication token for SonarQube  |
 
-### 🧩 Integration Strategy
 
-- ✅ Use in combination with SpotBugs and dependency-check workflows for complete static and SCA (Software Composition Analysis).
-- ✅ Recommended to use previously compiled source code artifact to avoid repeated builds.
-- ✅ Run this as a downstream job after build, bug analysis, and dependency check.
-- ❗SonarQube Scanner CLI runs inside a Docker container (`sonarsource/sonar-scanner-cli:latest`), so ensure network access to SonarQube.
-- ✅ Use consistent artifact names using GitHub context variables for reusability.
+### ⚙️ How It Works
 
-</details>
+This step invokes `sonar-scanner` with key project and environment details, including:
+
+- `sonar.projectName` and `sonar.projectKey` are dynamically set from the GitHub repository name.
+- Paths to the source code, compiled classes, tests, and analysis reports are specified.
+- The `qualitygate` input controls whether the workflow should wait for the quality gate result from SonarQube.
+
+### 📁 Required Reports
+
+Before running this action, make sure the following files are generated in your workflow:
+
+- **JaCoCo**: `jacoco.xml`
+- **Dependency-Check**: `dependency-check-report.html`
+- **SpotBugs**: `target/spotbugsXml.xml`
+
+These reports are consumed by the `sonar-scanner` during the analysis.
+
+</details> 
 
 <details>
 <summary><strong>🐳 docker-login-build-push-ecr.yml</strong> — Docker Build and Push to Amazon ECR</summary>

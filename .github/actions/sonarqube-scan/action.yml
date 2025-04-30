@@ -1,0 +1,29 @@
+name: SonarQube Static Code Analysis
+description: "Performs sonar scanning using sonar scanner cli"
+inputs:
+  qualitygate:
+    required: true
+    type: string
+secrets:
+  SONAR_HOST_URL:
+    required: true
+  SONAR_TOKEN:
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+  - name: Run SonarQube Scan
+    run: |
+      sonar-scanner \
+        -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+        -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+        -Dsonar.projectName=${{ github.event.repository.name }} \
+        -Dsonar.projectKey=${{ github.event.repository.name }} \
+        -Dsonar.coverage.jacoco.xmlReportPaths=jacoco.xml \
+        -Dsonar.dependencyCheck.reportPath=dependency-check-report.html \
+        -Dsonar.findbugs.reportpaths=target/spotbugsXml.xml \
+        -Dsonar.sources=src/main/java \
+        -Dsonar.tests=src/test/java \
+        -Dsonar.java.binaries=target/classes \
+        -Dsonar.qualitygate.wait=${{ inputs.qualitygate }}
