@@ -41,7 +41,7 @@ runs:
       shell: bash
       run: |
         echo "Installing license_finder"
-        sudo apt update && sudo apt install -y ruby ruby-dev
+        sudo apt update
         sudo gem install license_finder
         license_finder --project-path=. --decisions-file=${{ inputs.license_decision_file }}
 
@@ -53,19 +53,19 @@ runs:
           echo "All dependencies are approved"
         fi
 
-    - name: Clean up Ruby and License Finder dependencies
-      shell: bash
-      run: |
-        echo "Cleaning up Ruby, Gem, and license finder files..."
+    # - name: Clean up Ruby and License Finder dependencies
+    #   shell: bash
+    #   run: |
+    #     echo "Cleaning up Ruby, Gem, and license finder files..."
 
-        # Uninstall Ruby and RubyGems
-        sudo apt-get remove --purge -y ruby ruby-dev
-        sudo apt-get autoremove -y
-        sudo apt-get clean
+    #     # Uninstall Ruby and RubyGems
+    #     sudo apt-get remove --purge -y ruby ruby-dev
+    #     sudo apt-get autoremove -y
+    #     sudo apt-get clean
 
-        # Remove any residual directories
-        rm -rf ~/.gem
-        rm -rf .bundle
-        rm -rf vendor/
-        rm -rf .license_finder/
-        rm -rf .cache/
+    #     # Remove any residual directories
+    #     rm -rf ~/.gem
+    #     rm -rf .bundle
+    #     rm -rf vendor/
+    #     rm -rf .license_finder/
+    #     rm -rf .cache/
