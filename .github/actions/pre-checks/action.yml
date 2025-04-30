@@ -53,9 +53,17 @@ runs:
           echo "All dependencies are approved"
         fi
 
-    - name: Clean up scan artifacts
+    - name: Clean up Ruby and License Finder dependencies
       shell: bash
       run: |
+        echo "Cleaning up Ruby, Gem, and license finder files..."
+
+        # Uninstall Ruby and RubyGems
+        sudo apt-get remove --purge -y ruby ruby-dev
+        sudo apt-get autoremove -y
+        sudo apt-get clean
+
+        # Remove any residual directories
         rm -rf ~/.gem
         rm -rf .bundle
         rm -rf vendor/
