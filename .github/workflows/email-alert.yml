@@ -1,5 +1,5 @@
-name: "Send Failure Notification"
-description: "Send an email if a job fails"
+name: "Send Email Notification"
+
 
 on:
   workflow_call:
@@ -28,7 +28,37 @@ on:
         type: string
 
 jobs:
-  send-notification:
+  success:
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Success Notification Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.smtp_server }}
+          server_port: 587
+          username: ${{ secrets.smtp_username }}
+          password: ${{ secrets.smtp_password }}
+          subject: "✅ Build Successful for Commit ${{ inputs.commit_id }}"
+          to: "${{ inputs.commit_author_email }}"
+          from: "${{ secrets.smtp_username }}"
+          body: |
+            Hello Developer,
+
+            Your latest commit has passed all stages including vulnerability scans.
+
+            🧑‍💻 Author: ${{ inputs.commit_author_name }}
+            💡 Commit Message: ${{ inputs.commit_message }}
+            🔢 Commit ID: ${{ inputs.commit_id }}
+
+            🐳 Docker Image has been pushed and is ready for deployment.
+
+            📄 Logs: https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run_id }}
+
+            Great job! 🚀
+
+  failure:
+    if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
       - name: Send Failure Notification Email
@@ -54,26 +84,10 @@ jobs:
 
             Please check and fix it.
 
-
-  # notify-on-success:
-  #   uses: NavabShariff/shared-library/.github/workflows/send-success-notification.yml@main
-  #   needs: [build, sast, docker-build-push, docker-image-scan, trigger-deploy]
-  #   if: success()
-  #   secrets:
-  #     smtp_server: ${{ secrets.SMTP_SERVER }}
-  #     smtp_username: ${{ secrets.SMTP_USERNAME }}
-  #     smtp_password: ${{ secrets.SMTP_PASSWORD }}
-  #   with:
-  #     commit_author_name: ${{ github.event.pusher.name }}
-  #     commit_author_email: ${{ github.event.pusher.email }}
-  #     commit_message: ${{ github.event.head_commit.message }}
-  #     commit_id: ${{ github.sha }}
-  #     run_id: ${{ github.run_id }}
-
-  # notify-on-failure:
-  #   uses: NavabShariff/shared-library/.github/workflows/send-failure-notification.yml@main
-  #   needs: [build, sast, docker-build-push, docker-image-scan, trigger-deploy]
-  #   if: failure() 
+  # email_notification:
+  #   uses: NavabShariff/shared-library/.github/workflows/email-alert.yml@main
+  #   needs: [pre_checks, build, bug_analysis, dependency_check, sca, docker_build_push, docker_image_scan, dast, trigger_cd]
+  #   if: always()
   #   secrets:
   #     smtp_server: ${{ secrets.SMTP_SERVER }}
   #     smtp_username: ${{ secrets.SMTP_USERNAME }}
