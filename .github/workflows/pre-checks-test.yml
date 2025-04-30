@@ -1,0 +1,53 @@
+name: "Pre-checks"
+description: "Performs credential scan, commit sign-off check and license scanning"
+inputs:
+  commit_sign_off:
+    required: true
+    type: boolean
+    default: true
+  commit_message:
+    required: false
+    type: boolean
+    default: false
+  license_scanning:
+    required: true
+    type: boolean
+    default: true
+  license_decision_file:
+    required: true
+    type: string
+    default: 'doc/dependency_decisions.yml'
+  credential_scan:
+    required: true
+    type: boolean
+    default: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: credential-scan
+      if: ${{ inputs.credential_scan == 'true' }}
+      uses: gitleaks/gitleaks-action@v2
+
+    - name: check-commit-sign-off
+      uses: commit-check/commit-check-action@v1
+      with:
+        commit-signoff: ${{ inputs.commit_sign_off }}
+        message: ${{ inputs.commit_message }}
+
+    - name: check license scan
+      if: ${{ inputs.license_scanning == 'true' }}
+      shell: bash
+      run: |
+        echo "Installing license_finder"
+        sudo apt update && sudo apt install -y ruby ruby-dev
+        sudo gem install license_finder
+        license_finder --project-path=. --decisions-file=${{ inputs.license_decision_file }}
+
+        exit_code=$?
+        if [[ $exit_code -ne 0 ]]; then
+          echo "There are dependencies that need approval"
+          exit 1
+        else
+          echo "All dependencies are approved"
+        fi
