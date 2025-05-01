@@ -56,7 +56,7 @@ runs:
     - name: check files
       shell: bash
       run: |
-        ls -lh
+        ls -lah
     # - name: Clean up Cache  and License Finder dependencies
     #   shell: bash
     #   run: |
