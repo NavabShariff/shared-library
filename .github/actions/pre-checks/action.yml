@@ -53,6 +53,10 @@ runs:
           echo "All dependencies are approved"
         fi
 
+    - name: check files
+      shell: bash
+      run: |
+        ls -lh
     # - name: Clean up Cache  and License Finder dependencies
     #   shell: bash
     #   run: |
