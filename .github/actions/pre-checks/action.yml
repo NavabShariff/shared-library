@@ -57,8 +57,3 @@ runs:
       shell: bash
       run: |
         ls -lah
-    # - name: Clean up Cache  and License Finder dependencies
-    #   shell: bash
-    #   run: |
-    #     rm -rf .git
-    #     rm -rf venv
